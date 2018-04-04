@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.0'
     defaultConfig {
-        applicationId "com.example.rzm.appmarket"
+        applicationId "com.app.rzm"
         vectorDrawables.useSupportLibrary = true
         minSdkVersion 15
         targetSdkVersion 26
