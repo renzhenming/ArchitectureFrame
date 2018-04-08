@@ -45,6 +45,8 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit-converters:2.1.0'
     compile 'com.squareup.retrofit2:retrofit-adapters:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+
+    compile 'com.gyf.barlibrary:barlibrary:2.3.0'
 }
 // 指定编码
 tasks.withType(JavaCompile) {
