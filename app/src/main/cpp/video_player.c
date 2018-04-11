@@ -104,6 +104,8 @@ struct _Player {
 void decode_audio(Player *player, AVPacket *avPacket);
 
 void decode_video(Player *player, AVPacket *avPacket);
+
+void player_wait_for_frame(Player *player, int64_t stream_time, int stream_no);
 /**
  * 封装Player和stream_index，以便于在解码的时候可以根据当前这个Player
  * 的stream_index获取对应的队列，音频就取音频队列，视频就取视频队列
@@ -337,11 +339,11 @@ void decode_audio(Player *player, AVPacket *avPacket) {
 				player->out_sample_fmt, 1);
 
 		int64_t pts = avPacket->pts;
-//		if(pts != AV_NOPTS_VALUE){TODO
-//			player->audio_clock = av_rescale_q(pts,stream->time_base,AV_TIME_BASE_Q);
-//			LOGI("player_write_audio - read from pts");
-//			player_wait_for_frame(player,player->audio_clock+AUDIO_TIME_ADJUST_US,player->audio_stream_index);
-//		}
+		if(pts != AV_NOPTS_VALUE){
+			player->audio_clock = av_rescale_q(pts,stream->time_base,AV_TIME_BASE_Q);
+			LOGI("player_write_audio - read from pts");
+			player_wait_for_frame(player,player->audio_clock+AUDIO_TIME_ADJUST_US,player->audio_stream_index);
+		}
 
 		//关联当前线程的JNIEnv
 		JavaVM *javaVM = player->javaVM;
@@ -428,7 +430,7 @@ void decode_video(Player *player, AVPacket *avPacket) {
 		//不同时间基时间转换
 		int64_t time = av_rescale_q(pts, stream->time_base, AV_TIME_BASE_Q);
 		//等待time长的时间，时间结束，线程继续执行或者被唤醒继续执行 TODO
-		//player_wait_for_frame(player, time, player->video_stream_index);
+		player_wait_for_frame(player, time, player->video_stream_index);
 		//unlock
 		ANativeWindow_unlockAndPost(player->nativeWindow);
 
@@ -453,10 +455,12 @@ int64_t player_get_current_video_time(Player *player) {
 
 void player_wait_for_frame(Player *player, int64_t stream_time, int stream_no) {
 	pthread_mutex_lock(&player->mutex);
+
+	struct timespec outtime;
 	for (;;) {
 		int64_t current_video_time = player_get_current_video_time(player);
 		int64_t sleep_time = stream_time - current_video_time;
-		if (sleep_time < -300000ll) {
+		if (sleep_time < -300000) {
 			// 300 ms late
 			int64_t new_value = player->start_time - sleep_time;
 			LOGI("player_wait_for_frame[%d] correcting %f to %f because late",
@@ -476,9 +480,11 @@ void player_wait_for_frame(Player *player, int64_t stream_time, int stream_no) {
 			sleep_time = 500000ll;
 		}
 		//等待指定时长
-        //pthread_cond_timedwait(&player->cond, &player->mutex, timespec);
-		//int timeout_ret = pthread_cond_timeout_np(&player->cond, &player->mutex,
-		//		sleep_time / 1000ll);
+		outtime.tv_sec = sleep_time / 1000ll;
+		outtime.tv_nsec = 1000;
+        pthread_cond_timedwait(&player->cond, &player->mutex,  &outtime);
+//		int timeout_ret = pthread_cond_timeout_np(&player->cond, &player->mutex,
+//				sleep_time / 1000ll);
 
 		// just go further
 		LOGI("player_wait_for_frame[%d] finish", stream_no);
