@@ -90,12 +90,16 @@
         <activity android:name=".test.TestDaoSupportActivity">
         </activity>
         <activity android:name=".test.TestSImmerBarActivity">
+
+
+        </activity>
+
+        <activity android:name=".test.TestFFmpegActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
     </application>
 
