@@ -38,11 +38,14 @@ public abstract class AbsNavigationBar<P extends AbsNavigationBar.Builder.AbsNav
      * @param text
      */
     protected void setText(int viewId, String text) {
-        TextView tv = findViewById(viewId);
-        if(!TextUtils.isEmpty(text) && tv != null){
-            if (tv.getVisibility() != View.VISIBLE)
-                tv.setVisibility(View.VISIBLE);
-            tv.setText(text);
+        View view = findViewById(viewId);
+        if (view instanceof TextView){
+            TextView tv = (TextView) view;
+            if(!TextUtils.isEmpty(text) && tv != null){
+                if (tv.getVisibility() != View.VISIBLE)
+                    tv.setVisibility(View.VISIBLE);
+                tv.setText(text);
+            }
         }
     }
 
@@ -52,11 +55,14 @@ public abstract class AbsNavigationBar<P extends AbsNavigationBar.Builder.AbsNav
      * @param textColor
      */
     protected void setTextColor(int viewId, int textColor) {
-        TextView tv = findViewById(viewId);
-        if(tv != null){
-            if (tv.getVisibility() != View.VISIBLE)
-                tv.setVisibility(View.VISIBLE);
-            tv.setTextColor(textColor);
+        View view = findViewById(viewId);
+        if (view instanceof TextView) {
+            TextView tv = (TextView) view;
+            if (tv != null) {
+                if (tv.getVisibility() != View.VISIBLE)
+                    tv.setVisibility(View.VISIBLE);
+                tv.setTextColor(textColor);
+            }
         }
     }
 
@@ -66,11 +72,14 @@ public abstract class AbsNavigationBar<P extends AbsNavigationBar.Builder.AbsNav
      * @param textSize
      */
     protected void setTextSize(int viewId, float textSize) {
-        TextView tv = findViewById(viewId);
-        if(tv != null){
-            if (tv.getVisibility() != View.VISIBLE)
-                tv.setVisibility(View.VISIBLE);
-            tv.setTextSize(textSize);
+        View view = findViewById(viewId);
+        if (view instanceof TextView) {
+            TextView tv = (TextView) view;
+            if (tv != null) {
+                if (tv.getVisibility() != View.VISIBLE)
+                    tv.setVisibility(View.VISIBLE);
+                tv.setTextSize(textSize);
+            }
         }
     }
 

@@ -21,13 +21,7 @@ public class TestSkinActivity extends BaseSkinActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_skin);
-        startService(new Intent(getApplicationContext(), GuardService1.class));
-        startService(new Intent(getApplicationContext(), GuardService2.class));
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            //必须大于5.0
-            startService(new Intent(this,JobWakeUpService.class));
-        }
     }
 
     @Override

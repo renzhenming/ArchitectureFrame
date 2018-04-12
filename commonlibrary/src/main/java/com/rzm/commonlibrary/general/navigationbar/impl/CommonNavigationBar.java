@@ -35,18 +35,19 @@ public class CommonNavigationBar<D extends
         setTextColor(R.id.title,getParams().mTitleTextColor);
         setTextSize(R.id.title,getParams().mTitleTextSize);
 
-        setText(R.id.right_text, getParams().mRightText);
-        setTextColor(R.id.right_text,getParams().mRightTextColor);
-        setTextSize(R.id.right_text,getParams().mRightTextSize);
+        setText(R.id.right, getParams().mRightText);
+        setTextColor(R.id.right,getParams().mRightTextColor);
+        setTextSize(R.id.right,getParams().mRightTextSize);
 
-        setIcon(R.id.right_text,getParams().mRightIcon);
+        setIcon(R.id.right,getParams().mRightIcon);
+        setIcon(R.id.left,getParams().mLeftIcon);
         setBackgroundColor(R.id.navigation_bar_parent,getParams().mBackgoundColor);
-        setOnClickListener(R.id.right_text, getParams().mRightClickListener);
+        setOnClickListener(R.id.right, getParams().mRightClickListener);
 
         // 左边 要写一个默认的  finishActivity
-        setOnClickListener(R.id.back,getParams().mLeftClickListener);
+        setOnClickListener(R.id.left,getParams().mLeftClickListener);
 
-        setVisibility(R.id.back,getParams().leftIconVisible);
+        setVisibility(R.id.left,getParams().leftIconVisible);
     }
 
 
@@ -114,6 +115,11 @@ public class CommonNavigationBar<D extends
 
         public Builder setRightTextSize(int rightTextSize) {
             P.mRightTextSize = rightTextSize;
+            return this;
+        }
+
+        public Builder setLeftIcon(int leftIcon) {
+            P.mLeftIcon = leftIcon;
             return this;
         }
 
@@ -187,6 +193,8 @@ public class CommonNavigationBar<D extends
 
             public int mRightIcon;
 
+            public int mLeftIcon;
+
             // 后面还有一些通用的
             public View.OnClickListener mRightClickListener;
 
@@ -197,6 +205,7 @@ public class CommonNavigationBar<D extends
                     ((Activity) mContext).finish();
                 }
             };
+
 
 
             private DefaultNavigationParams(Context context, ViewGroup parent) {
