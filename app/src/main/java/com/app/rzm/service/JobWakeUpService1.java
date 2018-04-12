@@ -15,7 +15,7 @@ import android.util.Log;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class JobWakeUpService extends JobService {
+public class JobWakeUpService1 extends JobService {
 
 
     private int jobId = 12;
@@ -24,7 +24,7 @@ public class JobWakeUpService extends JobService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 开启一个轮寻
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo.Builder jobBuilder = new JobInfo.Builder(jobId,new ComponentName(this,JobWakeUpService.class));
+        JobInfo.Builder jobBuilder = new JobInfo.Builder(jobId,new ComponentName(this,JobWakeUpService1.class));
         //设置每两秒钟一次
         jobBuilder.setPeriodic(2000);
         jobScheduler.schedule(jobBuilder.build());
@@ -42,6 +42,12 @@ public class JobWakeUpService extends JobService {
         if(!messageServiceAlive){
             Log.e("TAG", "GuardService1被杀掉了，重新启动");
             startService(new Intent(this,GuardService1.class));
+        }
+
+        boolean JobWakeUpService2Alive = serviceAlive(JobWakeUpService2.class.getName());
+        if(!JobWakeUpService2Alive){
+            Log.e("TAG", "JobWakeUpService2被杀掉了，重新启动");
+            startService(new Intent(this,JobWakeUpService2.class));
         }
 
         return false;

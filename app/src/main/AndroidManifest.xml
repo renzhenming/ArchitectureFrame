@@ -48,9 +48,17 @@
             android:exported="true"
             android:process=":guardService2" />
         <service
-            android:name=".service.JobWakeUpService"
+            android:name=".service.JobWakeUpService1"
             android:enabled="true"
             android:exported="true"
+            android:process=":JobWakeUpService1"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".service.JobWakeUpService2"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":JobWakeUpService2"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
@@ -87,11 +95,9 @@
         <activity android:name=".test.TestCommonNavigationBarActivity" />
         <activity android:name=".test.TestPermissionHelperActivity" />
         <activity android:name=".test.TestCommonDialogActivity" />
-        <activity android:name=".test.TestDaoSupportActivity"></activity>
-        <activity android:name=".test.TestSImmerBarActivity"></activity>
-        <activity android:name=".test.TestFFmpegActivity">
-
-        </activity>
+        <activity android:name=".test.TestDaoSupportActivity" />
+        <activity android:name=".test.TestSImmerBarActivity" />
+        <activity android:name=".test.TestFFmpegActivity"></activity>
         <activity android:name=".test.TestDaemonServiceActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -99,6 +105,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+
+        <!--   android:finishOnTaskLaunch="true"在配置了该属性为true的activity中按home键返回到[home screen]屏幕后,再点击该应用的图标启动程序时,
+            则系统会调用该activity的[onDestroy]销毁。因为点击应用的图标启动程序时,重新启动了这个任务。
+            excludeFromRecents 是否在最近打开的应用程序中显示
+
+            -->
+        <activity android:name=".service.DaemonActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:finishOnTaskLaunch="false"
+            android:launchMode="singleInstance"
+            android:theme="@style/DaemonActivityStyle"/>
+
+</application>
 
 </manifest>
