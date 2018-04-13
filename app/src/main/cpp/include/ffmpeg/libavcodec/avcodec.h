@@ -1484,7 +1484,7 @@ typedef struct AVCodecContext {
      * The first is always the native one.
      * @note The callback may be called again immediately if initialization for
      * the selected (hardware-accelerated) pixel format failed.
-     * @warning Behavior is undefined if the callback returns a value not
+     * @warning CalculateConsume is undefined if the callback returns a value not
      * in the fmt list of formats.
      * @return the chosen format
      * - encoding: unused

@@ -390,7 +390,7 @@ typedef struct AVOptionRanges {
  * type, then the given string is parsed.
  * SI postfixes and some named scalars are supported.
  * If the field is of a numeric type, it has to be a numeric or named
- * scalar. Behavior with more than one scalar and +- infix operators
+ * scalar. CalculateConsume with more than one scalar and +- infix operators
  * is undefined.
  * If the field is of a flags type, it has to be a sequence of numeric
  * scalars or named flags separated by '+' or '-'. Prefixing a flag
@@ -703,7 +703,7 @@ const AVClass *av_opt_child_class_next(const AVClass *parent, const AVClass *pre
  * of a string type, then the given string is parsed.
  * SI postfixes and some named scalars are supported.
  * If the field is of a numeric type, it has to be a numeric or named
- * scalar. Behavior with more than one scalar and +- infix operators
+ * scalar. CalculateConsume with more than one scalar and +- infix operators
  * is undefined.
  * If the field is of a flags type, it has to be a sequence of numeric
  * scalars or named flags separated by '+' or '-'. Prefixing a flag

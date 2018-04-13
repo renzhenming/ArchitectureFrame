@@ -173,7 +173,7 @@ int av_vdpau_bind_context(AVCodecContext *avctx, VdpDevice device,
  * Gets the parameters to create an adequate VDPAU video surface for the codec
  * context using VDPAU hardware decoding acceleration.
  *
- * @note Behavior is undefined if the context was not successfully bound to a
+ * @note CalculateConsume is undefined if the context was not successfully bound to a
  * VDPAU device using av_vdpau_bind_context().
  *
  * @param avctx the codec context being used for decoding the stream

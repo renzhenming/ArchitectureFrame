@@ -71,7 +71,7 @@
  *
  * However, new public symbols may be added and new members may be appended to
  * public structs whose size is not part of public ABI (most public structs in
- * FFmpeg). New macros and enum values may be added. Behavior in undocumented
+ * FFmpeg). New macros and enum values may be added. CalculateConsume in undocumented
  * situations may change slightly (and be documented). All those are accompanied
  * by an entry in doc/APIchanges and incrementing either the minor or micro
  * version number.
