@@ -1,4 +1,4 @@
-package com.app.rzm.service;
+package com.rzm.commonlibrary.general.guard;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.rzm.commonlibrary.general.BaseApplication;
 import com.rzm.commonlibrary.utils.LogUtils;
 
 public class DaemonActivity extends AppCompatActivity {
@@ -32,21 +33,22 @@ public class DaemonActivity extends AppCompatActivity {
 
     /**
      * 监听手机的锁屏和开屏广播，锁屏后调用start开启这个activity
+     * 调用此方法时，activity未启动，不能使用this.context,只能用application的
      */
     public static void startDaemon(){
-        if (context == null) return;
-        Intent intent = new Intent(context,DaemonActivity.class);
+        Intent intent = new Intent(BaseApplication.getContext(),DaemonActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-        LogUtils.d(TAG,"startDaemon");
+        BaseApplication.getContext().startActivity(intent);
+        LogUtils.e(TAG,"startDaemon");
     }
 
     /**
      * 监听手机的锁屏和开屏广播，开屏后调用stop销毁这个activity
+     * 调用此方法时，可以使用activity的context
      */
     public static void stopDaemon(){
         if (context != null){
-            LogUtils.d(TAG,"stopDaemon");
+            LogUtils.e(TAG,"stopDaemon");
             context.finish();
         }
     }

@@ -1,4 +1,4 @@
-package com.app.rzm.service;
+package com.rzm.commonlibrary.general.guard;
 
 import android.app.Notification;
 import android.app.Service;
@@ -27,20 +27,7 @@ public class GuardService2 extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    Log.e("TAG", "GuardService2等待接收消息");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+        Log.e("TAG", "GuardService2等待接收消息");
     }
 
     @Override
@@ -71,4 +58,9 @@ public class GuardService2 extends Service {
             Log.e("TAG", "与GuardService1的链接断开，重新启动服务并绑定");
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

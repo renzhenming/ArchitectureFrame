@@ -2,6 +2,7 @@ package com.rzm.commonlibrary.general;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
@@ -24,10 +25,17 @@ import java.io.InputStreamReader;
 public class BaseApplication extends Application {
 
     private PatchManager mPatchManger;
+    public static Context mContext;
+
+    public static Context getContext(){
+        return mContext;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        this.mContext = this;
         //initExceptionHandler();
         //initAlibabaHotFix();
         //initMyHotFix();

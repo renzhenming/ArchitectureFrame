@@ -1,4 +1,4 @@
-package com.app.rzm.service;
+package com.rzm.commonlibrary.general.guard;
 
 import android.app.ActivityManager;
 import android.app.job.JobInfo;
@@ -15,20 +15,20 @@ import android.util.Log;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class JobWakeUpService1 extends JobService {
+public class JobWakeUpService2 extends JobService {
 
 
-    private int jobId = 12;
+    private int jobId = 13;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 开启一个轮寻
         JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        JobInfo.Builder jobBuilder = new JobInfo.Builder(jobId,new ComponentName(this,JobWakeUpService1.class));
+        JobInfo.Builder jobBuilder = new JobInfo.Builder(jobId,new ComponentName(this,JobWakeUpService2.class));
         //设置每两秒钟一次
         jobBuilder.setPeriodic(2000);
         jobScheduler.schedule(jobBuilder.build());
-        Log.e("TAG", "开启一个轮寻JobWakeUpService");
+        Log.e("TAG", "开启一个轮寻JobWakeUpService2");
         return START_STICKY;
     }
 
@@ -38,16 +38,16 @@ public class JobWakeUpService1 extends JobService {
         // 如果杀死了启动  轮寻onStartJob
 
         // 判断服务有没有在运行
-        boolean messageServiceAlive = serviceAlive(GuardService1.class.getName());
+        boolean messageServiceAlive = serviceAlive(GuardService2.class.getName());
         if(!messageServiceAlive){
-            Log.e("TAG", "GuardService1被杀掉了，重新启动");
+            Log.e("TAG", "GuardService2被杀掉了，重新启动");
             startService(new Intent(this,GuardService1.class));
         }
 
-        boolean JobWakeUpService2Alive = serviceAlive(JobWakeUpService2.class.getName());
-        if(!JobWakeUpService2Alive){
-            Log.e("TAG", "JobWakeUpService2被杀掉了，重新启动");
-            startService(new Intent(this,JobWakeUpService2.class));
+        boolean JobWakeUpService1Alive = serviceAlive(JobWakeUpService1.class.getName());
+        if(!JobWakeUpService1Alive){
+            Log.e("TAG", "JobWakeUpService1被杀掉了，重新启动");
+            startService(new Intent(this,JobWakeUpService1.class));
         }
 
         return false;
