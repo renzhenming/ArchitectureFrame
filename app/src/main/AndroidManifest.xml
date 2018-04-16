@@ -35,7 +35,13 @@
             android:label="TestActivity" />
         <activity android:name=".test.TestSkinActivity" />
         <activity android:name=".test.TestProxyActivity" />
-        <activity android:name=".test.TestCompressImageActivity" />
+        <activity android:name=".test.TestCompressImageActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
         <activity android:name=".test.TestCoordinatorCollapsingToolbarActivity" />
@@ -80,11 +86,7 @@
 
         <activity android:name=".test.TestAOPActivity"/>
         <activity android:name=".test.TestBehaviorActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
