@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:title="知乎首页"
+            app:titleTextColor="#FFFFFF" />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:text="CoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\nCoordinatorLayout与CollapsingToolbarLayout实现视差滚动动画和Toolbar滚动\n"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="70dp"
+        android:layout_marginEnd="16dp"
+        app:layout_behavior="com.rzm.commonlibrary.general.behavior.FloatingActionButtonBehevior"
+        android:layout_marginRight="16dp"
+        app:layout_scrollFlags="scroll|enterAlways|snap" />
+
+    <LinearLayout
+        android:id="@+id/bottom_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_download" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_download" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_download" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_download" />
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
