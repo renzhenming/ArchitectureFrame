@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created by renzhenming on 2018/4/13.
  */
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface CalculateConsume {
     //String value();
     //int type();
