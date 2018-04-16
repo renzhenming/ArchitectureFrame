@@ -78,9 +78,7 @@
 
         </activity>
 
-        <activity android:name=".test.TestAOPActivity">
-        <activity android:name=".test.TestFFmpegActivity"></activity>
-        <activity android:name=".test.TestDaemonServiceActivity"/>
+        <activity android:name=".test.TestAOPActivity"/>
         <activity android:name=".test.TestBehaviorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
