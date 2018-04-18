@@ -25,13 +25,7 @@ public class TestProxyActivity extends AppCompatActivity {
         /*Man man = new Man();
         bank = (IBank) Proxy.newProxyInstance(IBank.class.getClassLoader(), new Class<?>[] {IBank.class}, new BankInvocationHandler(man));*/
 
-        HookActivityUtil hookActivityUtil = new HookActivityUtil(this,TestHookActivity_Registered.class);
-        try {
-            hookActivityUtil.hookStartActivity();
-            hookActivityUtil.hookLaunchActivity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         String path = Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator+"app.apk";

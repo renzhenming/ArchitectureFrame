@@ -79,6 +79,9 @@ public class HookActivityUtil {
 
         //通过反射给handler设置callback
         Class<?> handlerClass = Class.forName("android.os.Handler");
+
+        //Handler的handleMessage方法是通过Handler内部的mCallback调用的，mCallback也就是通常传入的那个回调
+        //我们拦截到handleMessage这个方法，在这里将假的intent重新替换回来
         Field mCallback = handlerClass.getDeclaredField("mCallback");
         mCallback.setAccessible(true);
         mCallback.set(mHandler,new HandlerCallBack());
@@ -90,6 +93,7 @@ public class HookActivityUtil {
         public boolean handleMessage(Message msg) {
             //没发一个消息都会走一次这个方法
             //ActivityThread中的内部类Handler中的LaunchActivity常量 = 100
+            //public static final int LAUNCH_ACTIVITY = 100;
             if (msg.what == 100){
                 handleLaunchActivity(msg);
             }
@@ -99,6 +103,7 @@ public class HookActivityUtil {
 
     private void handleLaunchActivity(Message msg) {
         //看源码可以知道这个Object就是类ActivityClientRecord
+        //final ActivityClientRecord r = (ActivityClientRecord) msg.obj;
         Object record = msg.obj;
         //从中获取intent
         try {
@@ -114,11 +119,28 @@ public class HookActivityUtil {
 
             /**
              * 程序写到这里还是不完善的，目前只在被启动的activity继承自Activity的时候有效，如果继承自
-             * AppCompatActivity就会报错
+             * AppCompatActivity就会报错，
              *
-             * Caused by: java.lang.IllegalArgumentException: android.content.pm.PackageManager$NameNotFoundException:
-             * ComponentInfo{com.example.rzm.appmarket/com.example.rzm.appmarket.TestHookActivity}
+             * Caused by: java.lang.IllegalArgumentException: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.app.rzm/com.app.rzm.test.TestHookUnRegisteredActivity}
              * at android.support.v4.app.NavUtils.getParentActivityName(NavUtils.java:285)
+             * at android.support.v7.app.AppCompatDelegateImplV9.onCreate(AppCompatDelegateImplV9.java:158)
+             * at android.support.v7.app.AppCompatDelegateImplV14.onCreate(AppCompatDelegateImplV14.java:58)
+             * at android.support.v7.app.AppCompatActivity.onCreate(AppCompatActivity.java:72)
+             * at com.app.rzm.test.TestHookUnRegisteredActivity.onCreate(TestHookUnRegisteredActivity.java:12)
+             * at android.app.Activity.performCreate(Activity.java:6366)
+             * at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1126)
+             * at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2661)
+             * at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2779) 
+             * at android.app.ActivityThread.-wrap11(ActivityThread.java) 
+             * at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1593) 
+             * at android.os.Handler.dispatchMessage(Handler.java:111) 
+             * at android.os.Looper.loop(Looper.java:207) 
+             * at android.app.ActivityThread.main(ActivityThread.java:5979) 
+             * at java.lang.reflect.Method.invoke(Native Method) 
+             * at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:939) 
+             * at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:800) 
+             *
+             * 找到AppCompatDelegateImplV9 onCreate方法这里有一个NavUtils.getParentActivityName((Activity) mOriginalWindowCallback)
              *
              * 找到源码中的位置在NavUtils方法中
              *
@@ -157,8 +179,10 @@ public class HookActivityUtil {
              *       return parentActivity;
              *   }
              *
-             *   可以看到继承自AppCompatActivity的话会再次从PackageManager中取查找这个activity的名字，因为
-             *   没有头注册导致再次出错
+             *   可以看到继承自AppCompatActivity的话pm.getActivityInfo再次执行了，这个方法最初在startActivity的时候
+             *   已经调用了一次，从存储Activity的集合中根据全类名查找这个Activity，如果找不到抛出Activity没有在AndroidManifest
+             *   中注册的异常信息，这个操作其实和前边是一样的，会再次调用PackageManagerService的getActivityInfo方法，因为
+             *   没有注册导致集合中没有这个activity再次出错
              *
              *   PackageManager pm = context.getPackageManager();
              *   错误就发生在这里
@@ -204,6 +228,7 @@ public class HookActivityUtil {
             // Log.e("TAG", "methodName = " + method.getName());
             if (method.getName().startsWith("getActivityInfo")) {
                 ComponentName componentName = new ComponentName(context, clazz);
+                //将getActivityInfo方法中的第一个参数componentName替换为一个可以监测到的也就是我们上边用过的那个
                 args[0] = componentName;
             }
             return method.invoke(mActivityManagerObject, args);

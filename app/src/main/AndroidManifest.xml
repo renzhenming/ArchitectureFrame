@@ -34,18 +34,17 @@
             android:name=".test.TestActivity"
             android:label="TestActivity" />
         <activity android:name=".test.TestSkinActivity" />
-        <activity android:name=".test.TestProxyActivity" />
-        <activity android:name=".test.TestCompressImageActivity" >
+        <activity android:name=".test.TestProxyActivity"></activity>
+        <activity android:name=".test.TestHookActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".test.TestCompressImageActivity"></activity>
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
         <activity android:name=".test.TestCoordinatorCollapsingToolbarActivity" />
-        <activity android:name=".test.TestHookActivity_Registered" />
         <activity
             android:name=".ui.clip.ChooseVideoActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -80,14 +79,10 @@
         <activity android:name=".test.TestDaoSupportActivity" />
         <activity android:name=".test.TestSImmerBarActivity" />
         <activity android:name=".test.TestFFmpegActivity" />
-        <activity android:name=".test.TestDaemonServiceActivity">
-
-        </activity>
-
-        <activity android:name=".test.TestAOPActivity"/>
-        <activity android:name=".test.TestBehaviorActivity">
-
-        </activity>
+        <activity android:name=".test.TestDaemonServiceActivity"></activity>
+        <activity android:name=".test.TestAOPActivity" />
+        <activity android:name=".test.TestBehaviorActivity"></activity>
+        <activity android:name=".test.TestHookRegisteredActivity"></activity>
     </application>
 
 </manifest>

@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.app.rzm.R;
 
-public class TestHookActivity_Registered extends AppCompatActivity {
+public class TestHookUnRegisteredActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_hook__registered);
+        setContentView(R.layout.activity_unrigistered);
     }
 }

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:gravity="center"
     android:layout_height="match_parent">
     <Button
+        android:onClick="open"
         android:layout_width="match_parent"
         android:textColor="#000"
-        android:text="test hook success"
+        android:text="打开一个未注册的activity"
         android:layout_height="wrap_content"
-         />
+        />
 </LinearLayout>

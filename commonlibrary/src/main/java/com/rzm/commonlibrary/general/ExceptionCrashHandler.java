@@ -29,7 +29,7 @@ public class ExceptionCrashHandler implements Thread.UncaughtExceptionHandler {
 
     private static final String TAG = "ExceptionCrashHandler";
     private static final String CRASH_FILE_NAME = "crash_file_name";
-    private static ExceptionCrashHandler mInstance;
+    private static volatile ExceptionCrashHandler mInstance;
     private Context mContext;
     private Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
@@ -121,11 +121,11 @@ public class ExceptionCrashHandler implements Thread.UncaughtExceptionHandler {
         sb.append(exceptionInfo);
 
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            File dir = new File(mContext.getFilesDir()+File.separator+"crash"+File.separator);
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"sp_crash"+File.separator);
             // 先删除之前的异常信息
-            if (dir.exists()){
+            /*if (dir.exists()){
                 deleteDir(dir);
-            }
+            }*/
             //重新创建文件夹
             if (!dir.exists()){
                 dir.mkdir();

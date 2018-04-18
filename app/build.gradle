@@ -109,10 +109,7 @@ dependencies {
     compile files('libs/aspectjrt.jar')
 }
 
-
-
 //////////--------------------AOP配置-------------------///////////////
-
 
 
 final def log = project.logger
