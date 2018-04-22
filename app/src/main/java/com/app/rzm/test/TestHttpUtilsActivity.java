@@ -18,7 +18,7 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-        HttpUtils httpUtils2 = HttpUtils.with(this)
+        HttpUtils.with(this)
                 .cache(true)
                 .get()
                 .url("http://is.snssdk.com/2/essay/discovery/v3/")

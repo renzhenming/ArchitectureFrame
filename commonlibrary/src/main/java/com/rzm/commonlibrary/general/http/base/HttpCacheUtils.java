@@ -11,13 +11,25 @@ public class HttpCacheUtils {
 
     private static IHttpCache mHttpCache;
 
-    private static HttpCacheUtils instance = new HttpCacheUtils();
+    //IHttpCache是否被初始化过
+    private static boolean mHttpCacheInit = false;
+
+    //单例的DCL方式
+    private static volatile HttpCacheUtils instance;
 
     private HttpCacheUtils(){
 
     }
 
     public static HttpCacheUtils getInstance(){
+        if (instance == null){
+            synchronized (HttpCacheUtils.class){
+                if (instance == null){
+                    instance = new HttpCacheUtils();
+                }
+            }
+
+        }
         return instance;
     }
 
@@ -26,7 +38,11 @@ public class HttpCacheUtils {
      * @param httpCache
      */
     public HttpCacheUtils init(IHttpCache httpCache){
+        if (mHttpCacheInit){
+            throw new IllegalStateException("HttpCache have already been init");
+        }
         mHttpCache = httpCache;
+        mHttpCacheInit = true;
         return this;
     }
 

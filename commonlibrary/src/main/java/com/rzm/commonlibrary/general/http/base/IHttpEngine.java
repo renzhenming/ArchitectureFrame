@@ -3,6 +3,7 @@ package com.rzm.commonlibrary.general.http.base;
 import android.content.Context;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by rzm on 2017/8/20.
@@ -24,6 +25,7 @@ public interface IHttpEngine {
     void download(String url,ICallBack callBack);
     // 上传文件
     void upload(String path, String url,ICallBack callBack);
+
     // https添加安全证书
     // https 添加证书
 }

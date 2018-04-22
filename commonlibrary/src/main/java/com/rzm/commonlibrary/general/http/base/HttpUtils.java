@@ -1,6 +1,7 @@
 package com.rzm.commonlibrary.general.http.base;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -40,6 +41,9 @@ public class HttpUtils{
      * 软件中的对象（类、模块、函数等）应该对于扩展是开放的，但是，对于修改是封闭的
      */
     private static IHttpEngine mHttpEngine;
+
+    //IHttpEngine是否被初始化过
+    private static boolean mIHttpEngineInit = false;
 
     private Map<String,Object> mParams;
 
@@ -122,32 +126,6 @@ public class HttpUtils{
         mCache = cache;
         return this;
     }
-    /**
-     * 执行 设置回掉
-     * @return
-     */
-    public HttpUtils execute(ICallBack callBack){
-        if (callBack == null){
-            callBack = ICallBack.DEFAULT_CALL_BACK;
-        }
-
-        callBack.onPreExecute(mContext,mParams);
-
-        //判断执行方法
-        if (mType == POST_TYPE){
-            post(mContext,mUrl,mParams,callBack);
-        }
-        if (mType == GET_TYPE){
-            get(mContext,mUrl,mParams,callBack);
-        }
-        if (mType == DOWNLOAD_TYPE){
-            download(mUrl,callBack);
-        }
-        if (mType == UPLOAD_TYPE){
-            upload(mPath,mUrl,callBack);
-        }
-        return this;
-    }
 
     /**
      * 初始化网络引擎
@@ -155,7 +133,11 @@ public class HttpUtils{
      * @param httpEngine
      */
     public static void initHttpEngine(IHttpEngine httpEngine){
+        if (mIHttpEngineInit){
+            throw new IllegalStateException("HttpEngine have already been init");
+        }
         mHttpEngine = httpEngine;
+        mIHttpEngineInit = true;
     }
 
     /**
@@ -218,6 +200,37 @@ public class HttpUtils{
 
     private void upload(String path, String url, ICallBack callBack) {
         mHttpEngine.upload(path,url,callBack);
+    }
+
+    /**
+     * 执行 设置回掉
+     * @return
+     */
+    public HttpUtils execute(ICallBack callBack){
+        if (callBack == null){
+            callBack = ICallBack.DEFAULT_CALL_BACK;
+        }
+
+        callBack.onPreExecute(mContext,mParams);
+
+        if (TextUtils.isEmpty(mUrl)){
+            throw new NullPointerException("you have not set request url,use url(xxx) to set");
+        }
+
+        //判断执行方法
+        if (mType == POST_TYPE){
+            post(mContext,mUrl,mParams,callBack);
+        }
+        if (mType == GET_TYPE){
+            get(mContext,mUrl,mParams,callBack);
+        }
+        if (mType == DOWNLOAD_TYPE){
+            download(mUrl,callBack);
+        }
+        if (mType == UPLOAD_TYPE){
+            upload(mPath,mUrl,callBack);
+        }
+        return this;
     }
 
     //--------------------------------  供外界调用 --------------------------------//

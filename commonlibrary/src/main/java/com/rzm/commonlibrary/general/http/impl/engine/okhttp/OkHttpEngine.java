@@ -20,6 +20,7 @@ import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,7 +47,6 @@ public class OkHttpEngine implements IHttpEngine {
 
     private static Handler mHandler = new Handler();
 
-
     /***************************
      *
      * post请求
@@ -56,6 +56,8 @@ public class OkHttpEngine implements IHttpEngine {
 
     @Override
     public void post(final boolean cache, final Context context, String url, Map<String, Object> params, final ICallBack callBack) {
+
+        new OkHttpClient.Builder().connectTimeout(10, TimeUnit.MINUTES);
 
         final String paramsUrl = HttpUtils.jointParams(url, params);  //打印
         LogUtils.e(TAG, "post url:"+paramsUrl);
@@ -345,6 +347,7 @@ public class OkHttpEngine implements IHttpEngine {
             }
         });
     }
+
 
     public RequestBody createCustomRequestBody(final MediaType contentType, final File file, final ProgressListener listener) {
         return new RequestBody() {

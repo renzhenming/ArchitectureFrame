@@ -36,11 +36,7 @@
         <activity android:name=".test.TestSkinActivity" />
         <activity android:name=".test.TestProxyActivity"></activity>
         <activity android:name=".test.TestHookActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".test.TestCompressImageActivity"></activity>
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
@@ -69,7 +65,13 @@
         <activity android:name=".test.TestMyRecyclerViewActivity" />
         <activity android:name=".test.TextCustomeViewActivity" />
         <activity android:name=".test.TestAlphabetViewActivity" />
-        <activity android:name=".test.TestHttpUtilsActivity" />
+        <activity android:name=".test.TestHttpUtilsActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
         <activity android:name=".test.TestFixDexActivity" />
