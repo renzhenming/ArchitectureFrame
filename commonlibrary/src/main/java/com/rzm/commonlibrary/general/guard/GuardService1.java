@@ -7,18 +7,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.renzhenming.appmarket.test.GuardAidl;
+import com.rzm.commonlibrary.utils.LogUtils;
 
-
+/**
+ * create by rzm on 4/25/2018
+ * 双进程守护
+ */
 public class GuardService1 extends Service {
     private final int GuardServiceId2 = 2;
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("TAG", "GuardService1等待接收消息");
+        LogUtils.i("TAG", "GuardService1 wait for signal");
     }
 
     @Override
@@ -38,7 +40,7 @@ public class GuardService1 extends Service {
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Toast.makeText(getApplicationContext(),"建立链接",Toast.LENGTH_SHORT).show();
+            LogUtils.i("TAG", "connect to guardservice2");
         }
 
         @Override
@@ -46,12 +48,14 @@ public class GuardService1 extends Service {
             // 断开链接 ,重新启动，重新绑定
             startService(new Intent(getApplicationContext(), GuardService2.class));
             bindService(new Intent(getApplicationContext(),GuardService2.class),connection, Context.BIND_IMPORTANT);
-            Log.e("TAG", "与GuardService2的链接断开，重新启动服务并绑定");
+            LogUtils.i("TAG", "disconnect from guardservice2");
         }
     };
 
     @Override
     public void onDestroy() {
+        LogUtils.i("TAG", "guardservice2 is onDestroy");
+        unbindService(connection);
         super.onDestroy();
     }
 }

@@ -10,10 +10,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
+
+import com.rzm.commonlibrary.utils.LogUtils;
 
 import java.util.List;
 
+/**
+ * create by rzm on 4/25/2018
+ * 双进程守护 适用于安卓5.0及以上
+ */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobWakeUpService2 extends JobService {
 
@@ -28,7 +33,7 @@ public class JobWakeUpService2 extends JobService {
         //设置每两秒钟一次
         jobBuilder.setPeriodic(2000);
         jobScheduler.schedule(jobBuilder.build());
-        Log.e("TAG", "开启一个轮寻JobWakeUpService2");
+        LogUtils.i("TAG", "start JobWakeUpService2");
         return START_STICKY;
     }
 
@@ -40,13 +45,13 @@ public class JobWakeUpService2 extends JobService {
         // 判断服务有没有在运行
         boolean messageServiceAlive = serviceAlive(GuardService2.class.getName());
         if(!messageServiceAlive){
-            Log.e("TAG", "GuardService2被杀掉了，重新启动");
+            LogUtils.i("TAG", "GuardService2 is killed ，restart it");
             startService(new Intent(this,GuardService1.class));
         }
 
         boolean JobWakeUpService1Alive = serviceAlive(JobWakeUpService1.class.getName());
         if(!JobWakeUpService1Alive){
-            Log.e("TAG", "JobWakeUpService1被杀掉了，重新启动");
+            LogUtils.i("TAG", "JobWakeUpService1 is killed ，restart it");
             startService(new Intent(this,JobWakeUpService1.class));
         }
 

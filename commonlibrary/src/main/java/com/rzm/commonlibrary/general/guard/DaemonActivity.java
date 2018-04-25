@@ -1,14 +1,15 @@
 package com.rzm.commonlibrary.general.guard;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.rzm.commonlibrary.general.BaseApplication;
 import com.rzm.commonlibrary.utils.LogUtils;
+
 
 public class DaemonActivity extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class DaemonActivity extends AppCompatActivity {
         Intent intent = new Intent(BaseApplication.getContext(),DaemonActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.getContext().startActivity(intent);
-        LogUtils.e(TAG,"startDaemon");
+        LogUtils.i(TAG,"startDaemon");
     }
 
     /**
@@ -48,7 +49,7 @@ public class DaemonActivity extends AppCompatActivity {
      */
     public static void stopDaemon(){
         if (context != null){
-            LogUtils.e(TAG,"stopDaemon");
+            LogUtils.i(TAG,"stopDaemon");
             context.finish();
         }
     }
