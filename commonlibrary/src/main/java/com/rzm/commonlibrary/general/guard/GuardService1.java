@@ -54,6 +54,8 @@ public class GuardService1 extends Service {
 
     @Override
     public void onDestroy() {
+        //服务被杀死后先解绑，然后在onServiceDisconnected中重新绑定，防止
+        // android.app.ServiceConnectionLeaked
         LogUtils.i("TAG", "guardservice2 is onDestroy");
         unbindService(connection);
         super.onDestroy();
