@@ -34,11 +34,9 @@
             android:name=".test.TestActivity"
             android:label="TestActivity" />
         <activity android:name=".test.TestSkinActivity" />
-        <activity android:name=".test.TestProxyActivity"></activity>
-        <activity android:name=".test.TestHookActivity">
-
-        </activity>
-        <activity android:name=".test.TestCompressImageActivity"></activity>
+        <activity android:name=".test.TestProxyActivity" />
+        <activity android:name=".test.TestHookActivity"></activity>
+        <activity android:name=".test.TestCompressImageActivity" />
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
         <activity android:name=".test.TestCoordinatorCollapsingToolbarActivity" />
         <activity
@@ -65,12 +63,7 @@
         <activity android:name=".test.TestMyRecyclerViewActivity" />
         <activity android:name=".test.TextCustomeViewActivity" />
         <activity android:name=".test.TestAlphabetViewActivity" />
-        <activity android:name=".test.TestHttpUtilsActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".test.TestHttpUtilsActivity">
         </activity>
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
@@ -81,10 +74,17 @@
         <activity android:name=".test.TestDaoSupportActivity" />
         <activity android:name=".test.TestSImmerBarActivity" />
         <activity android:name=".test.TestFFmpegActivity" />
-        <activity android:name=".test.TestDaemonServiceActivity"></activity>
+        <activity android:name=".test.TestDaemonServiceActivity" />
         <activity android:name=".test.TestAOPActivity" />
-        <activity android:name=".test.TestBehaviorActivity"></activity>
-        <activity android:name=".test.TestHookRegisteredActivity"></activity>
+        <activity android:name=".test.TestBehaviorActivity" />
+        <activity android:name=".test.TestHookRegisteredActivity" />
+        <activity android:name=".test.TestRxjavaActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
