@@ -72,7 +72,6 @@ public class WebViewActivity extends AppCompatActivity{
 
     private ProgressBar mProgressbar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -481,10 +480,12 @@ public class WebViewActivity extends AppCompatActivity{
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            LogUtils.e(TAG, "onPageStarted");
         }
 
         // 修复不能拨打电话问题
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            LogUtils.e(TAG, "shouldOverrideUrlLoading："+url);
             if (url != null && url.startsWith("tel:")) {
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(url));
                 if (ActivityCompat.checkSelfPermission(WebViewActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -504,7 +505,8 @@ public class WebViewActivity extends AppCompatActivity{
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-
+            LogUtils.e(TAG, "onPageFinished："+url);
+            //如果加载出现了问题，后边内容不再执行
             final float percent = WebViewActivity.this.getIntent()
                     .getFloatExtra(SCROLL_PERCENT, 0);
 
@@ -519,18 +521,22 @@ public class WebViewActivity extends AppCompatActivity{
                     }
                 }, 100);
             }
+
+
         }
 
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
+            LogUtils.e(TAG, "onReceivedError："+error);
             Toast.makeText(getApplicationContext(),"页面加载失败",Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
+            LogUtils.e(TAG, "onReceivedError："+description);
             Toast.makeText(getApplicationContext(),"页面加载失败",Toast.LENGTH_SHORT).show();
         }
     }
