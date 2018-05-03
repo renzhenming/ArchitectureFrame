@@ -7,19 +7,13 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.rzm.commonlibrary.BaseSkinActivity;
-import com.rzm.commonlibrary.general.db.DaoSupportFactory;
-import com.rzm.commonlibrary.general.db.IDaoSupport;
+import com.rzm.commonlibrary.general.global.BaseSkinActivity;
 import com.app.rzm.R;
-import com.app.rzm.bean.Person;
 import com.rzm.commonlibrary.general.navigationbar.StatusBarManager;
-import com.rzm.commonlibrary.utils.LogUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestActivity extends BaseSkinActivity {
 

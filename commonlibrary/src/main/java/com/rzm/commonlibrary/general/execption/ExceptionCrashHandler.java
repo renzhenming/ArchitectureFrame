@@ -1,4 +1,4 @@
-package com.rzm.commonlibrary.general;
+package com.rzm.commonlibrary.general.execption;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
-import android.os.SystemClock;
 
 import com.rzm.commonlibrary.utils.LogUtils;
 
@@ -19,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by rzm on 2017/8/10.

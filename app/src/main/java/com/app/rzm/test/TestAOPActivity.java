@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.app.rzm.R;
 import com.app.rzm.aop.CalculateConsume;
 import com.app.rzm.aop.NetworkCheck;
-import com.rzm.commonlibrary.general.BaseApplication;
+import com.rzm.commonlibrary.general.global.BaseApplication;
 import com.rzm.commonlibrary.utils.LogUtils;
 
 public class TestAOPActivity extends AppCompatActivity {

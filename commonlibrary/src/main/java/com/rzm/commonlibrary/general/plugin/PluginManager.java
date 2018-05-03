@@ -2,7 +2,7 @@ package com.rzm.commonlibrary.general.plugin;
 
 import android.content.Context;
 
-import com.rzm.commonlibrary.general.FixDexManager;
+import com.rzm.commonlibrary.general.fix.FixDexManager;
 
 /**
  * Created by rzm on 2017/10/22.

@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -34,7 +33,7 @@
             android:label="TestActivity" />
         <activity android:name=".test.TestSkinActivity" />
         <activity android:name=".test.TestProxyActivity" />
-        <activity android:name=".test.TestHookActivity"></activity>
+        <activity android:name=".test.TestHookActivity" />
         <activity android:name=".test.TestCompressImageActivity" />
         <activity android:name=".ui.selectimage.ChoosePictureActivity" />
         <activity android:name=".test.TestCoordinatorCollapsingToolbarActivity" />
@@ -62,8 +61,7 @@
         <activity android:name=".test.TestMyRecyclerViewActivity" />
         <activity android:name=".test.TextCustomeViewActivity" />
         <activity android:name=".test.TestAlphabetViewActivity" />
-        <activity android:name=".test.TestHttpUtilsActivity">
-        </activity>
+        <activity android:name=".test.TestHttpUtilsActivity"></activity>
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
         <activity android:name=".test.TestFixDexActivity" />
@@ -78,6 +76,9 @@
         <activity android:name=".test.TestBehaviorActivity" />
         <activity android:name=".test.TestHookRegisteredActivity" />
         <activity android:name=".test.TestRxjavaActivity">
+
+        </activity>
+        <activity android:name=".test.TestWebViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

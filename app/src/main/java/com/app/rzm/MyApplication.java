@@ -3,12 +3,10 @@ package com.app.rzm;
 
 import android.content.Context;
 
-import com.rzm.commonlibrary.general.BaseApplication;
+import com.rzm.commonlibrary.general.global.BaseApplication;
 import com.rzm.commonlibrary.general.http.base.HttpUtils;
 import com.rzm.commonlibrary.general.http.impl.cache.SPCacheEngine;
 import com.rzm.commonlibrary.general.http.impl.engine.okhttp.OkHttpEngine;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by rzm on 2017/7/22.

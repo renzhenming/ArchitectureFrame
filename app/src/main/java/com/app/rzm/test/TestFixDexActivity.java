@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app.rzm.R;
-import com.rzm.commonlibrary.general.FixDexManager;
+import com.rzm.commonlibrary.general.fix.FixDexManager;
 
 import java.io.File;
 

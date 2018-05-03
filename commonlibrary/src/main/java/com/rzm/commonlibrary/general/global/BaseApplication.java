@@ -1,4 +1,4 @@
-package com.rzm.commonlibrary.general;
+package com.rzm.commonlibrary.general.global;
 
 import android.app.Activity;
 import android.app.Application;
@@ -8,9 +8,10 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.alipay.euler.andfix.patch.PatchManager;
+import com.rzm.commonlibrary.general.execption.ExceptionCrashHandler;
+import com.rzm.commonlibrary.general.fix.FixDexManager;
 import com.rzm.commonlibrary.utils.AppUtils;
 import com.rzm.commonlibrary.utils.LogUtils;
-import com.rzm.commonlibrary.utils.ToastUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

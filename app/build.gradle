@@ -22,7 +22,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.app.rzm"
         vectorDrawables.useSupportLibrary = true
@@ -97,7 +97,6 @@ dependencies {
 
 
     compile files('libs/aspectjrt.jar')
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:design:26.+'

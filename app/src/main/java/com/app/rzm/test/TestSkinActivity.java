@@ -5,7 +5,7 @@ import android.os.Environment;
 import android.os.Bundle;
 import android.view.View;
 
-import com.rzm.commonlibrary.BaseSkinActivity;
+import com.rzm.commonlibrary.general.global.BaseSkinActivity;
 import com.rzm.commonlibrary.general.skin.SkinManager;
 import com.app.rzm.R;
 

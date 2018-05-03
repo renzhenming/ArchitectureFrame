@@ -7,7 +7,7 @@ import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.rzm.commonlibrary.general.BaseApplication;
+import com.rzm.commonlibrary.general.global.BaseApplication;
 import com.rzm.commonlibrary.utils.LogUtils;
 
 

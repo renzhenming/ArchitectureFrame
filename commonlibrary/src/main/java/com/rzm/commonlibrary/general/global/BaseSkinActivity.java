@@ -1,4 +1,4 @@
-package com.rzm.commonlibrary;
+package com.rzm.commonlibrary.general.global;
 
 import android.content.Context;
 import android.os.Build;
