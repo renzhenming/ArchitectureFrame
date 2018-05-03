@@ -190,8 +190,9 @@ public class WebViewActivity extends AppCompatActivity{
         // setSupportMultipleWindows默认的是false，也就是说WebView默人不支持新窗口，但是这个不是说WebView不能打
         // 开多个页面了，只是你点击页面上的连接，当它的target属性是_blank时。它会在当前你所看到的页面继续加载那个连接。
         // 而不是重新打开一个窗口。当你设置为true时，就代表你想要你的WebView支持多窗口，但是一旦设置为true，
-        // 必须要重写WebChromeClient的onCreateWindow方法
-        //webSetting.setSupportMultipleWindows(true);
+        // 必须要重写WebChromeClient的onCreateWindow方法,这个方法挺危险的，如果设置为true不再onCreateWindow中处理
+        // 可能会导致有些页面打不开
+        // webSetting.setSupportMultipleWindows(true);
 
 
         //禁止或允许WebView从网络上加载图片
@@ -309,7 +310,9 @@ public class WebViewActivity extends AppCompatActivity{
         public void onGeolocationPermissionsShowPrompt(final String origin, final GeolocationPermissions.Callback callback) {
             super.onGeolocationPermissionsShowPrompt(origin, callback);
             LogUtils.e(TAG, "onGeolocationPermissionsShowPrompt");
-            final boolean remember = true;
+
+            //是否记住授权结果（true会不再提醒）
+            final boolean remember = false;
 
             AlertDialog.Builder builder = new AlertDialog.Builder(WebViewActivity.this);
             builder.setTitle("位置信息");
