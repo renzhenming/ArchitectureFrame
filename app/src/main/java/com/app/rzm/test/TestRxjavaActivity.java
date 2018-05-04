@@ -64,6 +64,36 @@ public class TestRxjavaActivity extends AppCompatActivity {
         });
     }
 
+    public void start(View view) {
+        Observable.just("aaa").map(new Function<String, String>() {
+            @Override
+            public String apply(String s) throws Exception {
+                LogUtils.i(TAG, "apply");
+                return s;
+            }
+        }).subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                LogUtils.i(TAG, "onSubscribe");
+            }
+
+            @Override
+            public void onNext(String s) {
+                LogUtils.i(TAG, "onNext");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                LogUtils.i(TAG, "onError");
+            }
+
+            @Override
+            public void onComplete() {
+                LogUtils.i(TAG, "onComplete");
+            }
+        });
+    }
+
     /**
      * 关键词搜索案例,当输入文件变化时就进行一次搜索，为了放置不必要的网络请求
      * 而使用关键词
@@ -71,7 +101,12 @@ public class TestRxjavaActivity extends AppCompatActivity {
      * @param s
      */
     public void search(final String s) {
-        Observable.just(s).filter(new Predicate<String>() {
+        Observable.just(s).map(new Function<String, String>() {
+            @Override
+            public String apply(String s) throws Exception {
+                return null;
+            }
+        }).filter(new Predicate<String>() {
             @Override
             public boolean test(String s) throws Exception {
                 if (!TextUtils.isEmpty(s) && s.contains("a")) {
