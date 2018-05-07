@@ -6,6 +6,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.util.HashMap;
 
 
 public class ExtractVideoInfoUtil {
@@ -31,7 +32,12 @@ public class ExtractVideoInfoUtil {
 
     }
 
+    /**
+     * 获取视频宽度
+     * @return
+     */
     public int getVideoWidth() {
+        if (mMetadataRetriever == null) return 0;
         String w = mMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
         int width = -1;
         if (!TextUtils.isEmpty(w)) {
@@ -40,7 +46,12 @@ public class ExtractVideoInfoUtil {
         return width;
     }
 
+    /**
+     * 获取视频高度
+     * @return
+     */
     public int getVideoHeight() {
+        if (mMetadataRetriever == null) return 0;
         String h = mMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
         int height = -1;
         if (!TextUtils.isEmpty(h)) {
@@ -51,19 +62,19 @@ public class ExtractVideoInfoUtil {
 
     /**
      * 获取视频的典型的一帧图片，不耗时
-     *
      * @return Bitmap
      */
     public Bitmap extractFrame() {
+        if (mMetadataRetriever == null) return null;
         return mMetadataRetriever.getFrameAtTime();
     }
 
     /**
      * 获取视频某一帧,不一定是关键帧
-     *
      * @param timeMs 毫秒
      */
     public Bitmap extractFrame(long timeMs) {
+        if (mMetadataRetriever == null) return null;
         Bitmap bitmap = null;
         for (long i = timeMs; i < fileLength; i += 1000) {
             bitmap = mMetadataRetriever.getFrameAtTime(i * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
@@ -78,11 +89,11 @@ public class ExtractVideoInfoUtil {
 
     /***
      * 获取视频的长度时间
-     *
      * @return String 毫秒
      */
     public String getVideoLength() {
         try {
+            if (mMetadataRetriever == null) return null;
             return mMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,10 +103,10 @@ public class ExtractVideoInfoUtil {
 
     /**
      * 获取视频旋转角度
-     *
      * @return
      */
     public int getVideoDegree() {
+        if (mMetadataRetriever == null) return 0;
         int degree = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             String degreeStr = mMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
@@ -111,5 +122,4 @@ public class ExtractVideoInfoUtil {
             mMetadataRetriever.release();
         }
     }
-
 }
