@@ -37,6 +37,13 @@ import com.rzm.commonlibrary.utils.LogUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+/**
+* @author rzm
+* create at 2018/5/4 上午10:52
+* 目前支持的功能有：下载文件
+*              打开系统相册
+*              拦截地理位置授权
+*/
 public class WebViewActivity extends AppCompatActivity{
 
     public static final String URL = "url";
