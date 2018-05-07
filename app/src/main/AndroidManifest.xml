@@ -76,14 +76,14 @@
         <activity android:name=".test.TestBehaviorActivity" />
         <activity android:name=".test.TestHookRegisteredActivity" />
         <activity android:name=".test.TestRxjavaActivity">
-
-        </activity>
-        <activity android:name=".test.TestWebViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".test.TestWebViewActivity">
+
         </activity>
     </application>
 
