@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -62,6 +63,43 @@ public class TestRxjavaActivity extends AppCompatActivity {
                 search(s.toString());
             }
         });
+
+        Observable.just("haha").map(new Function<String, String>() {
+            @Override
+            public String apply(String s) throws Exception {
+                Log.i(TAG,"apply1"+Thread.currentThread().getName());
+                return s;
+            }
+        }).map(new Function<String, String>() {
+            @Override
+            public String apply(String s) throws Exception {
+                Log.i(TAG,"apply2"+Thread.currentThread().getName());
+                return s;
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.i(TAG,"onSubscribe"+Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.i(TAG,"onNext"+Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG,"onError"+Thread.currentThread().getName());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG,"onComplete"+Thread.currentThread().getName());
+                    }
+                });
+
     }
 
     public void start(View view) {
