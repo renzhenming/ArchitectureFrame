@@ -109,7 +109,7 @@ public class TestRxjavaActivity extends AppCompatActivity {
                 LogUtils.i(TAG, "apply");
                 return s;
             }
-        }).subscribe(new Observer<String>() {
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
             @Override
             public void onSubscribe(Disposable d) {
                 LogUtils.i(TAG, "onSubscribe");
