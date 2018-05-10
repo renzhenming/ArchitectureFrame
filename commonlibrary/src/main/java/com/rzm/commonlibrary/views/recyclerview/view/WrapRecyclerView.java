@@ -176,7 +176,7 @@ public class WrapRecyclerView extends RecyclerView {
                 dismissView(mFailureView);
             }
         }else{
-            showView(this,true);
+            showView(this,false);
             if (mEmptyView != null) {
                 dismissView(mEmptyView);
             }

@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:gravity="center"
         android:textColor="#f00"
-        android:id="@+id/center_text"
+        android:id="@+id/text"
         android:textSize="18sp"
         android:background="#9f9"
         android:text="我是Center"

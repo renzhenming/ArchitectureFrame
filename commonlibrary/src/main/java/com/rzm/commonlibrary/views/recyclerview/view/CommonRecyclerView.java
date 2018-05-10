@@ -4,9 +4,14 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
 import com.rzm.commonlibrary.views.recyclerview.creator.LoadViewCreator;
 
 /**
@@ -17,7 +22,7 @@ import com.rzm.commonlibrary.views.recyclerview.creator.LoadViewCreator;
  * 4.上拉加载下一页
  */
 
-public class CommonRecyclerView extends RefreshRecyclerView{
+public class CommonRecyclerView extends RefreshRecyclerView {
     //上拉加载更多辅助类
     private LoadViewCreator mLoadViewCreator;
 
@@ -25,6 +30,12 @@ public class CommonRecyclerView extends RefreshRecyclerView{
     private View mLoadView;
 
     private float mDownY;
+
+    //当前RecyclerView的LayoutManager类型
+    protected LayoutManagerType layoutManagerType;
+
+    //加载下一页的方式，默认滑动到底部自动加载
+    private LoadMoreType mLoadMoreType = LoadMoreType.Auto;
 
     //加载更多布局的高度
     private int mLoadViewHeight;
@@ -47,6 +58,15 @@ public class CommonRecyclerView extends RefreshRecyclerView{
     //当前是否在拖拽
     private boolean mCurrentDrag = false;
 
+    //当前最后一个可见条目的位置
+    private int mLastVisibleItemPosition;
+
+    //当LayoutManager是StaggeredLayoutManager的时候，最后一行可见条目数组
+    private int[] mLastPositions;
+
+    //是否全部数据都已经加载完成，默认为false
+    private boolean mComplete = false;
+
     public CommonRecyclerView(Context context) {
         super(context);
     }
@@ -60,12 +80,12 @@ public class CommonRecyclerView extends RefreshRecyclerView{
     }
 
     /**
-     * 先处理上拉加载更多，同时考虑加载列表的不同风格样式，确保这个项目还是下一个项目都能用
-     * 所以我们不能直接添加View，需要利用辅助类
+     * 利用辅助类接口把加载更多的脚布局样式设置提供出去
      * LoadViewCreator必须在所有的脚布局之后设置才能有效，没有做位置的设定，默认按添加顺序显示
+     *
      * @param creator
      */
-    public void addLoadViewCreator(LoadViewCreator creator){
+    public void addLoadViewCreator(LoadViewCreator creator) {
         this.mLoadViewCreator = creator;
         addLoadView();
     }
@@ -81,34 +101,114 @@ public class CommonRecyclerView extends RefreshRecyclerView{
      */
     private void addLoadView() {
         Adapter adapter = getAdapter();
-        if (adapter != null && mLoadViewCreator != null){
+        if (adapter != null && mLoadViewCreator != null) {
             View loadView = mLoadViewCreator.getLoadView(getContext(), this);
-            if (loadView != null){
+            if (loadView != null) {
                 addFooterView(loadView);
                 this.mLoadView = loadView;
             }
         }
     }
 
+    public enum LayoutManagerType {
+        LinearLayout,
+        StaggeredGridLayout,
+        GridLayout
+    }
+
     /**
-     * 在dispatch中处理按下和抬起的事件，因为recyclerView如果已经设置了条目点击事件，那么在onTouchEvent中，按下的事件
-     * 不会被处理
-     * @param ev
-     * @return
+     * 设置加载下一页的方式
+     * Auto滑动到底部自动加载
+     * Pull滑动到底部手动上拉加载
      */
+    public enum LoadMoreType {
+        Auto, Pull
+    }
+
+    /**
+     * 设置加载下一页的方式，默认滑动到底部自动加载
+     *
+     * @param type
+     */
+    public void setLoadMoreType(LoadMoreType type) {
+        this.mLoadMoreType = type;
+    }
+
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                mDownY = ev.getRawY();
+    public void onScrolled(int dx, int dy) {
+        super.onScrolled(dx, dy);
+        //如果不是自动加载下一页，下边的逻辑目前由于不涉及其他功能就不再走了
+        if (mLoadMoreType != LoadMoreType.Auto) return;
+
+        RecyclerView.LayoutManager layoutManager = getLayoutManager();
+
+        if (layoutManagerType == null) {
+            if (layoutManager instanceof LinearLayoutManager) {
+                layoutManagerType = LayoutManagerType.LinearLayout;
+            } else if (layoutManager instanceof GridLayoutManager) {
+                layoutManagerType = LayoutManagerType.GridLayout;
+            } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+                layoutManagerType = LayoutManagerType.StaggeredGridLayout;
+            } else {
+                throw new RuntimeException("LayoutManager type unknown");
+            }
+        }
+
+        //根据LayoutManager类型获取最后一个可见条目位置
+        switch (layoutManagerType) {
+            case LinearLayout:
+                mLastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                 break;
-            case MotionEvent.ACTION_UP:
-                if (mCurrentDrag) {
-                    restoreLoadView();
+            case GridLayout:
+                mLastVisibleItemPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
+                break;
+            case StaggeredGridLayout:
+                StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
+                if (mLastPositions == null) {
+                    mLastPositions = new int[staggeredGridLayoutManager.getSpanCount()];
                 }
+                staggeredGridLayoutManager.findLastVisibleItemPositions(mLastPositions);
+                mLastVisibleItemPosition = findMax(mLastPositions);
                 break;
         }
-        return super.dispatchTouchEvent(ev);
+    }
+
+    private int findMax(int[] lastPositions) {
+        int max = lastPositions[0];
+        for (int value : lastPositions) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    @Override
+    public void onScrollStateChanged(int state) {
+        super.onScrollStateChanged(state);
+
+        //如果不是自动加载下一页，下边的逻辑目前由于不涉及其他功能就不再走了
+        if (mLoadMoreType != LoadMoreType.Auto) return;
+
+        if (mListener != null && state == RecyclerView.SCROLL_STATE_IDLE) {
+            RecyclerView.LayoutManager layoutManager = getLayoutManager();
+
+            //获取当前可见的item个数
+            int visibleItemCount = layoutManager.getChildCount();
+
+            //获取setAdapter之后所有的item个数包括未显示到屏幕上的
+            int totalItemCount = layoutManager.getItemCount();
+            if (mLoadViewCreator == null) {
+                throw new NullPointerException("you have not set LoadViewCreator");
+            }
+            if (visibleItemCount > 0 && mLastVisibleItemPosition >= totalItemCount - 1 &&
+                    totalItemCount > visibleItemCount && !mComplete) {
+                mLoadViewCreator.onLoading();
+                if (mListener != null) {
+                    mListener.onLoad();
+                }
+            }
+        }
     }
 
     /**
@@ -116,17 +216,17 @@ public class CommonRecyclerView extends RefreshRecyclerView{
      */
     private void restoreLoadView() {
         //获取当前位置loadView的marginBottom值
-        if (mLoadView == null)return;
+        if (mLoadView == null) return;
 
         int currentBottomMargin = ((MarginLayoutParams) (mLoadView.getLayoutParams())).bottomMargin;
 
         //最终要滑动到marginBottom为0的位置
         int finalBottomMargin = 0;
 
-        if (mCurrentLoadStatus == LOAD_STATUS_LOOSEN_LOADING){
+        if (mCurrentLoadStatus == LOAD_STATUS_LOOSEN_LOADING && !mComplete) {
             mCurrentLoadStatus = LOAD_STATUS_LOADING;
 
-            if (mLoadViewCreator != null){
+            if (mLoadViewCreator != null) {
                 mLoadViewCreator.onLoading();
             }
 
@@ -142,7 +242,8 @@ public class CommonRecyclerView extends RefreshRecyclerView{
         ValueAnimator animator = ObjectAnimator.ofFloat(currentBottomMargin, finalBottomMargin).setDuration(distance);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override public void onAnimationUpdate(ValueAnimator animation) {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
 
                 float currentTopMargin = (float) animation.getAnimatedValue();
                 setLoadViewMarginBottom((int) currentTopMargin);
@@ -155,77 +256,112 @@ public class CommonRecyclerView extends RefreshRecyclerView{
         mCurrentDrag = false;
     }
 
+
+    /**
+     * 在dispatch中处理按下和抬起的事件，因为recyclerView如果已经设置了条目点击事件，那么在onTouchEvent中，按下的事件
+     * 不会被处理
+     *
+     * @param ev
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //自动加载下一页状态下不需要处理触摸事件，因为就目前来说，触摸事件只跟下一页加载方式有关
+        //if (mLoadMoreType != LoadMoreType.Auto) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mDownY = ev.getRawY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (mCurrentDrag) {
+                        restoreLoadView();
+                    }
+                    break;
+            }
+        //}
+        return super.dispatchTouchEvent(ev);
+    }
+
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        switch (e.getAction()){
-            case MotionEvent.ACTION_MOVE:
-                // 如果是在最底部才处理，否则不需要处理
-                if (canScrollDown() || mCurrentLoadStatus == LOAD_STATUS_LOADING){
-                    // 如果没有到达最底端，也就是说还可以向下滚动就什么都不处理
-                    return super.onTouchEvent(e);
-                }
 
-                if (mLoadViewCreator != null){
-                    mLoadViewHeight = mLoadView.getMeasuredHeight();
-                }
+        //自动加载下一页状态下不需要处理触摸事件，因为就目前来说，触摸事件只跟下一页加载方式有关
+        //if (mLoadMoreType != LoadMoreType.Auto) {
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_MOVE:
+                    // 如果是在最底部才处理，否则不需要处理
+                    if (canScrollDown() || mCurrentLoadStatus == LOAD_STATUS_LOADING) {
+                        // 如果没有到达最底端，也就是说还可以向下滚动就什么都不处理
+                        return super.onTouchEvent(e);
+                    }
 
-                // 解决上拉加载更多自动滚动问题
-                if (mCurrentDrag) {
-                    scrollToPosition(getAdapter().getItemCount() - 1);
-                }
+                    if (mLoadViewCreator != null) {
+                        mLoadViewHeight = mLoadView.getMeasuredHeight();
+                    }
 
-                //获取手指触摸拖拽的距离
-                int distanceY = (int) (e.getRawY() - mDownY);
-                distanceY = (int) (distanceY * mDragResistance);
+                    // 解决上拉加载更多自动滚动问题
+                    if (mCurrentDrag) {
+                        scrollToPosition(getAdapter().getItemCount() - 1);
+                    }
 
-                // 如果是已经到达底部，并且不断的拉动，那么不断的改变LoadView的marginBottom的值
+                    //获取手指触摸拖拽的距离
+                    int distanceY = (int) (e.getRawY() - mDownY);
+                    distanceY = (int) (distanceY * mDragResistance);
 
-                //注意上拉得到的distanceY是负值
-                if (distanceY < 0){
+                    // 如果是已经到达底部，并且不断的拉动，那么不断的改变LoadView的marginBottom的值
 
-                    //通过设置loadView的marginBottom值不断的移动loadView的位置
-                    setLoadViewMarginBottom(-distanceY);
+                    //注意上拉得到的distanceY是负值
+                    if (distanceY < 0) {
 
-                    //更新状态
-                    updateLoadStatus(-distanceY);
+                        //通过设置loadView的marginBottom值不断的移动loadView的位置
+                        setLoadViewMarginBottom(-distanceY);
 
-                    //当前是否在拖拽
-                    mCurrentDrag = true;
+                        //更新状态
+                        updateLoadStatus(-distanceY);
 
-                    return true;
-                }
-                break;
-        }
+                        //当前是否在拖拽
+                        mCurrentDrag = true;
+
+                        return true;
+                    }
+                    break;
+            }
+        //}
         return super.onTouchEvent(e);
     }
 
     /**
      * 回调状态
+     *
      * @param dragHeight
      */
     private void updateLoadStatus(int dragHeight) {
-        if (dragHeight <= 0){
+        //如果加载已经完成，那么最后的拉动不需要更新状态
+        if (mComplete) return;
+        if (dragHeight <= 0) {
             mCurrentLoadStatus = LOAD_STATUS_NORMAL;
-        }else if (dragHeight < mLoadViewHeight){
+        } else if (dragHeight < mLoadViewHeight) {
             //当拖动距离小于loadView的高度的时候
             mCurrentLoadStatus = LOAD_STATUS_PULL_DOWN;
-        }else {
+        } else {
             mCurrentLoadStatus = LOAD_STATUS_LOOSEN_LOADING;
         }
 
-        if (mLoadViewCreator != null){
-            mLoadViewCreator.onPull(dragHeight,mLoadViewHeight,mCurrentLoadStatus);
+        if (mLoadViewCreator != null) {
+            mLoadViewCreator.onPull(dragHeight, mLoadViewHeight, mCurrentLoadStatus);
         }
     }
 
     /**
      * 设置loadView的marginBottom值
+     *
      * @param marginBottom
      */
     private void setLoadViewMarginBottom(int marginBottom) {
         if (mLoadView == null) return;
         MarginLayoutParams layoutParams = (MarginLayoutParams) mLoadView.getLayoutParams();
-        if (marginBottom < 0){
+        if (marginBottom < 0) {
             marginBottom = 0;
         }
         layoutParams.bottomMargin = marginBottom;
@@ -233,22 +369,6 @@ public class CommonRecyclerView extends RefreshRecyclerView{
     }
 
     /**
-     * @return Whether it is possible for the child view of this layout to
-     * scroll up. Override this if the child view is a custom view.
-     * 判断是不是滚动到了最顶部，这个是从SwipeRefreshLayout里面copy过来的源代码
-     *
-     * 如下方法已过时:
-     *
-     * if (android.os.Build.VERSION.SDK_INT < 14) {
-     *    return ViewCompat.canScrollVertically(this, -1) || this.getScrollY() > 0;
-     * } else {
-     *    return ViewCompat.canScrollVertically(this, -1);
-     * }
-     *
-     * 方法 canScrollVertically(int direction):
-     *
-     * Check if this view can be scrolled vertically in a certain direction.
-     * params Negative to check scrolling up, positive to check scrolling down.
      * @return true if this view can be scrolled in the specified direction, false otherwise.
      */
     private boolean canScrollDown() {
@@ -256,12 +376,33 @@ public class CommonRecyclerView extends RefreshRecyclerView{
     }
 
 
-    public void stopLoad() {
+    /**
+     * 全部数据加载完成的时候调用这个方法，
+     */
+    public void onLoadComplete() {
+        setLoadComplete(true);
         mCurrentLoadStatus = LOAD_STATUS_NORMAL;
         restoreLoadView();
         if (mLoadViewCreator != null) {
             mLoadViewCreator.onStopLoad();
         }
+    }
+
+    /**
+     * 是否全部数据加载完成，这个方法不提供外界调用，只用于stopLoad，onRefreshComplete
+     * @param complete
+     */
+    protected void setLoadComplete(boolean complete){
+        this.mComplete = complete;
+    }
+
+    /**
+     * 刷新的时候调用
+     */
+    public void onRefreshComplete() {
+        //刷新之后重新设置mLoadComplete为false
+        setLoadComplete(false);
+        stopRefresh();
     }
 
 

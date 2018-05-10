@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app.rzm.R;
+import com.rzm.commonlibrary.utils.NetWorkUtils;
 import com.rzm.commonlibrary.views.recyclerview.adpter.CommonRecyclerAdpater;
 import com.rzm.commonlibrary.views.recyclerview.creator.DefaultLoadCreator;
 import com.rzm.commonlibrary.views.recyclerview.creator.DefaultRefreshCreator;
@@ -25,6 +26,10 @@ import java.util.List;
 public class TestMyRecyclerViewActivity extends AppCompatActivity {
 
     private CommonRecyclerView mRecyclerView;
+
+    public static final int SIZE = 20;
+
+    private int currentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,7 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
             }
         });
 
-        myAdapter.setOnItemChildClickListener(R.id.text_adapter,new CommonRecyclerAdpater.OnItemChildClickListener<String>() {
+        myAdapter.setOnItemChildClickListener(R.id.text,new CommonRecyclerAdpater.OnItemChildClickListener<String>() {
             @Override
             public void onItemChildClick(String o, int position) {
                 Toast.makeText(getApplicationContext(),"text,position="+position,Toast.LENGTH_SHORT).show();
@@ -103,21 +108,32 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
          * 空页面的设置可以在任何位置，因为它的显示和隐藏是根据数据来的
          */
         mRecyclerView.addEmptyView(view);
-
+        /**
+         * 设置加载下一页的方式为拖动加载
+         */
+        mRecyclerView.setLoadMoreType(CommonRecyclerView.LoadMoreType.Auto);
         /**
          * 加载中的页面需要在开始加载页面之前进行add,否则会被覆盖
          */
         mRecyclerView.addLoadingView(loadingView);
 
+        if (!NetWorkUtils.isNetWorkConn(getApplicationContext())){
+            /**
+             * 加载失败页面在网络异常或者请求服务器异常的时候add,否则会被覆盖
+             */
+            mRecyclerView.addFailureView(loadingFailedView);
+            return;
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 40; i++) {
+                for (int i = 0; i < SIZE; i++) {
                     mList.add("测试数据"+i);
                 }
                 myAdapter.notifyDataSetChanged();
             }
-        },2000);
+        },1000);
 
         mRecyclerView.setOnRefreshListener(new RefreshRecyclerView.OnRefreshListener() {
             @Override
@@ -125,12 +141,13 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRecyclerView.stopRefresh();
-
-                        /**
-                         * 加载失败页面在网络异常或者请求服务器异常的时候add,否则会被覆盖
-                         */
-                        mRecyclerView.addFailureView(loadingFailedView);
+                        currentPage = 0;
+                        mRecyclerView.onRefreshComplete();
+                        mList.clear();
+                        for (int i = 0; i < SIZE; i++) {
+                            mList.add("测试数据"+i);
+                        }
+                        myAdapter.notifyDataSetChanged();
                     }
                 },1500);
             }
@@ -142,9 +159,15 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRecyclerView.stopLoad();
+                        currentPage ++;
+                        for (int i = currentPage*SIZE; i < currentPage*SIZE+SIZE; i++) {
+                            mList.add("测试数据"+i);
+                        }
+                        myAdapter.notifyDataSetChanged();
+                        if (currentPage == 3)
+                            mRecyclerView.onLoadComplete();
                     }
-                },1500);
+                },1000);
             }
         });
 
