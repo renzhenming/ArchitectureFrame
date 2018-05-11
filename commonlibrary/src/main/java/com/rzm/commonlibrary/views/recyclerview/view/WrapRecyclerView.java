@@ -18,10 +18,10 @@ import com.rzm.commonlibrary.views.recyclerview.adpter.WrapRecyclerAdapter;
 public class WrapRecyclerView extends RecyclerView {
 
     //列表数据adapter
-    private Adapter mAdapter;
+    protected Adapter mAdapter;
 
     //包装类adapter
-    private WrapRecyclerAdapter mWrapRecyclerAdapter;
+    protected WrapRecyclerAdapter mWrapRecyclerAdapter;
 
     //空页面
     private View mEmptyView;
@@ -112,6 +112,17 @@ public class WrapRecyclerView extends RecyclerView {
     }
 
     /**
+     * 移除下拉刷新的头布局（默认移除第一个添加的头布局，所以要保证刷新布局就是第一个添加的）
+     */
+    public void removeRefreshView() {
+        if (mWrapRecyclerAdapter == null){
+            throw new NullPointerException("adapter cannot be null");
+        }
+
+        mWrapRecyclerAdapter.removeRefreshView();
+    }
+
+    /**
      * 移除尾部
      * @param view
      */
@@ -121,6 +132,17 @@ public class WrapRecyclerView extends RecyclerView {
         }
 
         mWrapRecyclerAdapter.removeFooterView(view);
+    }
+
+    /**
+     * 移除加载下一页的脚布局（默认移除最后一个添加的脚布局，所以要保证加载下一页的脚布局就是最后一个脚布局）
+     */
+    public void removeLoadMoreView() {
+        if (mWrapRecyclerAdapter == null){
+            throw new NullPointerException("adapter cannot be null");
+        }
+
+        mWrapRecyclerAdapter.removeLoadMoreView();
     }
 
     /**

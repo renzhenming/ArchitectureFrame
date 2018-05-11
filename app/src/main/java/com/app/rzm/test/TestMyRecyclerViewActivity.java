@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.app.rzm.R;
+import com.rzm.commonlibrary.utils.LogUtils;
 import com.rzm.commonlibrary.utils.NetWorkUtils;
 import com.rzm.commonlibrary.views.recyclerview.adpter.CommonRecyclerAdpater;
 import com.rzm.commonlibrary.views.recyclerview.creator.DefaultLoadCreator;
@@ -112,6 +113,11 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
          * 设置加载下一页的方式为拖动加载
          */
         mRecyclerView.setLoadMoreType(CommonRecyclerView.LoadMoreType.Auto);
+        LogUtils.i("头布局个数："+mRecyclerView.getHeaderViewsCount()+",脚布局个数："+mRecyclerView.getFooterViewsCount());
+        mRecyclerView.setRefreshEnabled(true);
+        mRecyclerView.setLoadMoreEnabled(true);
+
+        LogUtils.i("头布局个数2："+mRecyclerView.getHeaderViewsCount()+",脚布局个数："+mRecyclerView.getFooterViewsCount());
         /**
          * 加载中的页面需要在开始加载页面之前进行add,否则会被覆盖
          */
@@ -159,13 +165,14 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        mRecyclerView.onLoadComplete(false);
                         currentPage ++;
                         for (int i = currentPage*SIZE; i < currentPage*SIZE+SIZE; i++) {
                             mList.add("测试数据"+i);
                         }
                         myAdapter.notifyDataSetChanged();
                         if (currentPage == 3)
-                            mRecyclerView.onLoadComplete();
+                            mRecyclerView.onLoadComplete(true);
                     }
                 },1000);
             }

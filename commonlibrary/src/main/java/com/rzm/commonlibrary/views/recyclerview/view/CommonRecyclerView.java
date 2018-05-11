@@ -67,6 +67,9 @@ public class CommonRecyclerView extends RefreshRecyclerView {
     //是否全部数据都已经加载完成，默认为false
     private boolean mComplete = false;
 
+    //是否可以加载下一页，脚布局是否存在
+    private boolean mLoadMoreEnabled;
+
     public CommonRecyclerView(Context context) {
         super(context);
     }
@@ -106,6 +109,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
             if (loadView != null) {
                 addFooterView(loadView);
                 this.mLoadView = loadView;
+                mLoadViewCreator.onInit();
             }
         }
     }
@@ -127,7 +131,6 @@ public class CommonRecyclerView extends RefreshRecyclerView {
 
     /**
      * 设置加载下一页的方式，默认滑动到底部自动加载
-     *
      * @param type
      */
     public void setLoadMoreType(LoadMoreType type) {
@@ -138,7 +141,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
         //如果不是自动加载下一页，下边的逻辑目前由于不涉及其他功能就不再走了
-        if (mLoadMoreType != LoadMoreType.Auto) return;
+        if (mLoadMoreType != LoadMoreType.Auto || !mLoadMoreEnabled) return;
 
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
 
@@ -188,7 +191,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
         super.onScrollStateChanged(state);
 
         //如果不是自动加载下一页，下边的逻辑目前由于不涉及其他功能就不再走了
-        if (mLoadMoreType != LoadMoreType.Auto) return;
+        if (mLoadMoreType != LoadMoreType.Auto || !mLoadMoreEnabled) return;
 
         if (mListener != null && state == RecyclerView.SCROLL_STATE_IDLE) {
             RecyclerView.LayoutManager layoutManager = getLayoutManager();
@@ -198,12 +201,18 @@ public class CommonRecyclerView extends RefreshRecyclerView {
 
             //获取setAdapter之后所有的item个数包括未显示到屏幕上的
             int totalItemCount = layoutManager.getItemCount();
-            if (mLoadViewCreator == null) {
-                throw new NullPointerException("you have not set LoadViewCreator");
-            }
-            if (visibleItemCount > 0 && mLastVisibleItemPosition >= totalItemCount - 1 &&
-                    totalItemCount > visibleItemCount && !mComplete) {
-                mLoadViewCreator.onLoading();
+
+            //当滑动到底部的时候，仍需要满足两个条件才能进行下一页的加载，1.数据还没有全部加载完成 2.当前状态不是正在加载
+            if (visibleItemCount > 0 && mLastVisibleItemPosition >= totalItemCount - 1
+                    && totalItemCount > visibleItemCount && !mComplete
+                    && mCurrentLoadStatus != LOAD_STATUS_LOADING) {
+
+                mCurrentLoadStatus = LOAD_STATUS_LOADING;
+
+                if (mLoadViewCreator != null) {
+                    mLoadViewCreator.onLoading();
+                }
+
                 if (mListener != null) {
                     mListener.onLoad();
                 }
@@ -267,27 +276,26 @@ public class CommonRecyclerView extends RefreshRecyclerView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         //自动加载下一页状态下不需要处理触摸事件，因为就目前来说，触摸事件只跟下一页加载方式有关
-        //if (mLoadMoreType != LoadMoreType.Auto) {
-            switch (ev.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mDownY = ev.getRawY();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (mCurrentDrag) {
-                        restoreLoadView();
-                    }
-                    break;
-            }
-        //}
+        if (mLoadMoreType != LoadMoreType.Auto && mLoadMoreEnabled) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mDownY = ev.getRawY();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mCurrentDrag) {
+                    restoreLoadView();
+                }
+                break;
+        }
+        }
         return super.dispatchTouchEvent(ev);
     }
 
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-
-        //自动加载下一页状态下不需要处理触摸事件，因为就目前来说，触摸事件只跟下一页加载方式有关
-        //if (mLoadMoreType != LoadMoreType.Auto) {
+        //如果不是自动加载下一页，下边的逻辑目前由于不涉及其他功能就不再走了
+        if (mLoadMoreType != LoadMoreType.Auto && mLoadMoreEnabled) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                     // 如果是在最底部才处理，否则不需要处理
@@ -296,7 +304,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
                         return super.onTouchEvent(e);
                     }
 
-                    if (mLoadViewCreator != null) {
+                    if (mLoadView != null) {
                         mLoadViewHeight = mLoadView.getMeasuredHeight();
                     }
 
@@ -327,7 +335,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
                     }
                     break;
             }
-        //}
+        }
         return super.onTouchEvent(e);
     }
 
@@ -375,24 +383,57 @@ public class CommonRecyclerView extends RefreshRecyclerView {
         return canScrollVertically(1);
     }
 
+    /**
+     * 到底加载是否可用
+     */
+    public void setLoadMoreEnabled(boolean enabled) {
+        if(mWrapRecyclerAdapter == null){
+            throw new NullPointerException("you have not set adapter right now");
+        }
+        mLoadMoreEnabled = enabled;
+        if (!enabled) {
+            removeLoadMoreView();
+        }
+    }
 
+    /**
+     * 获取头布局总个数
+     * @return
+     */
+    public int getHeaderViewsCount(){
+        if(mWrapRecyclerAdapter == null){
+            throw new NullPointerException("you have not set adapter right now");
+        }
+        return mWrapRecyclerAdapter.getHeaderViewsCount();
+    }
+    /**
+     * 获取脚布局总个数
+     * @return
+     */
+    public int getFooterViewsCount(){
+        if(mWrapRecyclerAdapter == null){
+            throw new NullPointerException("you have not set adapter right now");
+        }
+        return mWrapRecyclerAdapter.getFooterViewsCount();
+    }
     /**
      * 全部数据加载完成的时候调用这个方法，
      */
-    public void onLoadComplete() {
-        setLoadComplete(true);
+    public void onLoadComplete(boolean isFullComplete) {
+        setLoadComplete(isFullComplete);
         mCurrentLoadStatus = LOAD_STATUS_NORMAL;
         restoreLoadView();
         if (mLoadViewCreator != null) {
-            mLoadViewCreator.onStopLoad();
+            mLoadViewCreator.onStopLoad(isFullComplete);
         }
     }
 
     /**
      * 是否全部数据加载完成，这个方法不提供外界调用，只用于stopLoad，onRefreshComplete
+     *
      * @param complete
      */
-    protected void setLoadComplete(boolean complete){
+    protected void setLoadComplete(boolean complete) {
         this.mComplete = complete;
     }
 
@@ -402,6 +443,9 @@ public class CommonRecyclerView extends RefreshRecyclerView {
     public void onRefreshComplete() {
         //刷新之后重新设置mLoadComplete为false
         setLoadComplete(false);
+        //重新初始化加载更多布局
+        if (mLoadViewCreator != null)
+            mLoadViewCreator.onInit();
         stopRefresh();
     }
 

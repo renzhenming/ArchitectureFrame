@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rzm.commonlibrary.R;
+import com.rzm.commonlibrary.views.recyclerview.view.CommonRecyclerView;
 
 
 /**
@@ -24,16 +25,31 @@ public class DefaultLoadCreator extends LoadViewCreator {
 
     @Override
     public void onPull(int currentDragHeight, int loadViewHeight, int currentLoadStatus) {
-        mLoadMoreView.setText("上拉加载");
+        if (currentLoadStatus == CommonRecyclerView.LOAD_STATUS_LOOSEN_LOADING){
+            mLoadMoreView.setText("onPull 松开加载");
+        }else{
+            mLoadMoreView.setText("onPull 上拉加载更多");
+        }
+
     }
 
     @Override
     public void onLoading() {
-        mLoadMoreView.setText("正在加载");
+        mLoadMoreView.setText("onLoading 正在加载");
     }
 
     @Override
-    public void onStopLoad() {
-        mLoadMoreView.setText("加载完成");
+    public void onInit() {
+        mLoadMoreView.setText("onInit 上拉加载更多");
+    }
+
+    @Override
+    public void onStopLoad(boolean isFullComplete) {
+        if (isFullComplete){
+            mLoadMoreView.setText("onStopLoad 没有更多数据了");
+        }else{
+            mLoadMoreView.setText("onStopLoad 上拉加载更多");
+        }
+
     }
 }

@@ -50,6 +50,9 @@ public class RefreshRecyclerView extends WrapRecyclerView {
     //是否正在拖动
     private boolean mCurrentDrag;
 
+    //下拉刷新是否可用
+    private boolean mPullRefreshEnabled;
+
     public RefreshRecyclerView(Context context) {
         super(context);
     }
@@ -146,16 +149,18 @@ public class RefreshRecyclerView extends WrapRecyclerView {
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //相对屏幕的位置
-                mStartDonwY = ev.getRawY();
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mCurrentDrag) {
-                    restoreRefreshView();
-                }
-                break;
+        if (mPullRefreshEnabled) {
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    //相对屏幕的位置
+                    mStartDonwY = ev.getRawY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (mCurrentDrag) {
+                        restoreRefreshView();
+                    }
+                    break;
+            }
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -215,39 +220,41 @@ public class RefreshRecyclerView extends WrapRecyclerView {
      */
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
+        if (mPullRefreshEnabled) {
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_MOVE:
 
-                // 如果是在最顶部才处理，否则不需要处理，如果正在刷新中，也不再处理
-                if (canScrollUp() || mCurrentRefreshStatus == REFRESH_STATUS_REFRESHING){
-                    // 如果没有到达最顶端，也就是说还可以向上滚动就什么都不处理
-                    return super.onTouchEvent(e);
-                }
+                    // 如果是在最顶部才处理，否则不需要处理，如果正在刷新中，也不再处理
+                    if (canScrollUp() || mCurrentRefreshStatus == REFRESH_STATUS_REFRESHING) {
+                        // 如果没有到达最顶端，也就是说还可以向上滚动就什么都不处理
+                        return super.onTouchEvent(e);
+                    }
 
-                // 解决下拉刷新自动滚动问题
-                if (mCurrentDrag) {
-                    scrollToPosition(0);
-                }
+                    // 解决下拉刷新自动滚动问题
+                    if (mCurrentDrag) {
+                        scrollToPosition(0);
+                    }
 
-                //获取手指触摸拖拽的距离
-                int dragDistance = (int) (e.getRawY() - mStartDonwY);
+                    //获取手指触摸拖拽的距离
+                    int dragDistance = (int) (e.getRawY() - mStartDonwY);
 
-                //设置拖拽阻力系数，即实际刷新view的移动距离是拖拽系数和拖拽距离的乘积
-                dragDistance = (int) (dragDistance*mDragResistance);
-                if (dragDistance > 0){
-                    //拖拽过程中不断的设置refresh view的marginTop值
-                    int marginTop = dragDistance - mRefreshViewHeight;
+                    //设置拖拽阻力系数，即实际刷新view的移动距离是拖拽系数和拖拽距离的乘积
+                    dragDistance = (int) (dragDistance * mDragResistance);
+                    if (dragDistance > 0) {
+                        //拖拽过程中不断的设置refresh view的marginTop值
+                        int marginTop = dragDistance - mRefreshViewHeight;
 
-                    setRefreshViewMarginTop(marginTop);
+                        setRefreshViewMarginTop(marginTop);
 
-                    //更新当前状态
-                    updateRefreshStatus(marginTop);
+                        //更新当前状态
+                        updateRefreshStatus(marginTop);
 
-                    mCurrentDrag = true;
+                        mCurrentDrag = true;
 
-                    return false;
-                }
-                break;
+                        return false;
+                    }
+                    break;
+            }
         }
         return super.onTouchEvent(e);
     }
@@ -306,9 +313,26 @@ public class RefreshRecyclerView extends WrapRecyclerView {
     }
 
     /**
+     * 设置下拉刷新是否可用
+     * @param enabled
+     */
+    public void setRefreshEnabled(boolean enabled) {
+        if(mWrapRecyclerAdapter == null){
+            throw new NullPointerException("you have not set adapter right now");
+        }
+        mPullRefreshEnabled = enabled;
+        if (!enabled) {
+            removeRefreshView();
+        }
+    }
+
+    /**
      * 停止刷新,刷新完成后调用此方法
      */
     public void stopRefresh() {
+         if (!(this instanceof RefreshRecyclerView)){
+             throw new IllegalStateException("you should use onRefreshComplete to finish refresh in CommonRecyclerView");
+         }
          mCurrentRefreshStatus = REFRESH_STATUS_NORMAL;
          restoreRefreshView();
          if (mRefreshViewCreator != null) {

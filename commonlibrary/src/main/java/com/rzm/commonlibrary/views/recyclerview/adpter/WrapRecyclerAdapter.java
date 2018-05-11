@@ -79,6 +79,17 @@ public class WrapRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
+     * 获取头布局的数量
+     * @return
+     */
+    public int getHeaderViewsCount(){
+        if (mHeaderViews != null){
+            return mHeaderViews.size();
+        }
+        return 0;
+    }
+
+    /**
      * 移除header view
      *
      * @param view 被移除的view
@@ -88,6 +99,19 @@ public class WrapRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (i < 0) return;
         mHeaderViews.remove(i);
         notifyDataSetChanged();
+    }
+
+    /**
+     * 移除下拉刷新的头布局，注意，默认会移除第一个头布局，所以
+     * 一定要保证下拉刷新头布局是第一个添加的
+     */
+    public void removeRefreshView() {
+        if (getHeaderViewsCount() > 0) {
+            mHeaderViews.remove(mHeaderViews.keyAt(0));
+            this.notifyDataSetChanged();
+        }else{
+            throw new NullPointerException("you have not set refresh view");
+        }
     }
 
     /**
@@ -116,6 +140,27 @@ public class WrapRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
+     * 获取脚布局的数量
+     * @return
+     */
+    public int getFooterViewsCount(){
+        if (mFooterViews != null){
+            return mFooterViews.size();
+        }
+        return 0;
+    }
+
+    /**
+     * 获取指定位置的脚布局
+     * @return
+     */
+    public View getFooterView(int position){
+        if (mFooterViews != null){
+            return mFooterViews.get(mFooterViews.keyAt(position));
+        }
+        return null;
+    }
+    /**
      * 判断当前viewType是不是footer
      *
      * @param viewType 添加到集合时候的key值就是viewType
@@ -125,6 +170,7 @@ public class WrapRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         int i = mFooterViews.indexOfKey(viewType);
         return i >= 0;
     }
+
 
     /**
      * 移除footer view
@@ -136,6 +182,19 @@ public class WrapRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (i < 0) return;
         mFooterViews.remove(i);
         notifyDataSetChanged();
+    }
+
+    /**
+     * 移除加载下一页的脚布局，注意，默认会移除最后一个脚布局，所以
+     * 一定要保证加载下一页的脚布局设置在最后一个
+     */
+    public void removeLoadMoreView() {
+        if (getFooterViewsCount() > 0) {
+            mFooterViews.remove(mFooterViews.keyAt(getFooterViewsCount()-1));
+            this.notifyDataSetChanged();
+        }else{
+            throw new NullPointerException("you have not set load more view");
+        }
     }
 
     /**

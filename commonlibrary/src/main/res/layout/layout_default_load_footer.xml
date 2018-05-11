@@ -5,7 +5,6 @@
     <TextView
         android:id="@+id/load_tv"
         android:layout_width="match_parent"
-        android:text="加载更多"
         android:gravity="center"
         android:layout_height="50dp" />
 </LinearLayout>
