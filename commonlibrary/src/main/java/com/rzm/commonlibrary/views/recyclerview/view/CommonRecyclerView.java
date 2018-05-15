@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.rzm.commonlibrary.utils.LogUtils;
 import com.rzm.commonlibrary.views.recyclerview.creator.LoadViewCreator;
 
 /**
@@ -89,54 +90,55 @@ public class CommonRecyclerView extends RefreshRecyclerView {
      * @param creator
      */
     public void addLoadViewCreator(LoadViewCreator creator) {
-        this.mLoadViewCreator = creator;
-        addLoadView();
-    }
-
-    @Override
-    public void setAdapter(Adapter adapter) {
-        super.setAdapter(adapter);
-        addLoadView();
-    }
-
-    /**
-     * 添加加载更多的view
-     */
-    private void addLoadView() {
-        Adapter adapter = getAdapter();
-        if (adapter != null && mLoadViewCreator != null) {
-            View loadView = mLoadViewCreator.getLoadView(getContext(), this);
-            if (loadView != null) {
-                addFooterView(loadView);
-                this.mLoadView = loadView;
-                mLoadViewCreator.onInit();
-            }
+        if (creator == null) {
+            throw new NullPointerException("LoadViewCreator cannot be null");
         }
-    }
+        this.mLoadViewCreator = creator;
 
-    public enum LayoutManagerType {
-        LinearLayout,
-        StaggeredGridLayout,
-        GridLayout
-    }
+        Adapter adapter = getAdapter();
+        if (adapter == null) {
+            throw new NullPointerException("you must set Adapter before addLoadViewCreator");
+        }
 
-    /**
-     * 设置加载下一页的方式
-     * Auto滑动到底部自动加载
-     * Pull滑动到底部手动上拉加载
-     */
-    public enum LoadMoreType {
-        Auto, Pull
+        View loadView = mLoadViewCreator.getLoadView(getContext(), this);
+        if (loadView != null) {
+            this.mLoadView = loadView;
+            addFooterView(loadView);
+            mLoadViewCreator.onInit();
+        }
     }
 
     /**
      * 设置加载下一页的方式，默认滑动到底部自动加载
+     *
      * @param type
      */
     public void setLoadMoreType(LoadMoreType type) {
         this.mLoadMoreType = type;
     }
 
+    /**
+     * 在一个数组中求最大的值
+     *
+     * @param lastPositions
+     * @return
+     */
+    private int findMax(int[] lastPositions) {
+        int max = lastPositions[0];
+        for (int value : lastPositions) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    /**
+     * 自动加载下一页模式下，得到最后一个可见条目的position
+     *
+     * @param dx
+     * @param dy
+     */
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
@@ -176,15 +178,6 @@ public class CommonRecyclerView extends RefreshRecyclerView {
         }
     }
 
-    private int findMax(int[] lastPositions) {
-        int max = lastPositions[0];
-        for (int value : lastPositions) {
-            if (value > max) {
-                max = value;
-            }
-        }
-        return max;
-    }
 
     @Override
     public void onScrollStateChanged(int state) {
@@ -202,7 +195,8 @@ public class CommonRecyclerView extends RefreshRecyclerView {
             //获取setAdapter之后所有的item个数包括未显示到屏幕上的
             int totalItemCount = layoutManager.getItemCount();
 
-            //当滑动到底部的时候，仍需要满足两个条件才能进行下一页的加载，1.数据还没有全部加载完成 2.当前状态不是正在加载
+            //当滑动到底部的时候，仍需要满足两个条件才能进行下一页的加载，1.服务器返回的数据假设有100页，还没有加载到最
+            // 后100页时算是数据还没有全部加载完成，此时可加载下一页 2.当前状态不是正在加载
             if (visibleItemCount > 0 && mLastVisibleItemPosition >= totalItemCount - 1
                     && totalItemCount > visibleItemCount && !mComplete
                     && mCurrentLoadStatus != LOAD_STATUS_LOADING) {
@@ -228,25 +222,10 @@ public class CommonRecyclerView extends RefreshRecyclerView {
         if (mLoadView == null) return;
 
         int currentBottomMargin = ((MarginLayoutParams) (mLoadView.getLayoutParams())).bottomMargin;
-
         //最终要滑动到marginBottom为0的位置
         int finalBottomMargin = 0;
-
-        if (mCurrentLoadStatus == LOAD_STATUS_LOOSEN_LOADING && !mComplete) {
-            mCurrentLoadStatus = LOAD_STATUS_LOADING;
-
-            if (mLoadViewCreator != null) {
-                mLoadViewCreator.onLoading();
-            }
-
-            if (mListener != null) {
-                mListener.onLoad();
-            }
-        }
-
         //distance用作动画执行的时间
         int distance = currentBottomMargin - finalBottomMargin;
-
         // 回弹到指定位置
         ValueAnimator animator = ObjectAnimator.ofFloat(currentBottomMargin, finalBottomMargin).setDuration(distance);
 
@@ -256,11 +235,21 @@ public class CommonRecyclerView extends RefreshRecyclerView {
 
                 float currentTopMargin = (float) animation.getAnimatedValue();
                 setLoadViewMarginBottom((int) currentTopMargin);
-
             }
         });
 
         animator.start();
+
+        if (mCurrentLoadStatus == LOAD_STATUS_LOOSEN_LOADING) {
+            mCurrentLoadStatus = LOAD_STATUS_LOADING;
+
+            if (mLoadViewCreator != null) {
+                mLoadViewCreator.onLoading();
+            }
+            if (mListener != null) {
+                mListener.onLoad();
+            }
+        }
 
         mCurrentDrag = false;
     }
@@ -277,16 +266,16 @@ public class CommonRecyclerView extends RefreshRecyclerView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         //自动加载下一页状态下不需要处理触摸事件，因为就目前来说，触摸事件只跟下一页加载方式有关
         if (mLoadMoreType != LoadMoreType.Auto && mLoadMoreEnabled) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mDownY = ev.getRawY();
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mCurrentDrag) {
-                    restoreLoadView();
-                }
-                break;
-        }
+            switch (ev.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mDownY = ev.getRawY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (mCurrentDrag) {
+                        restoreLoadView();
+                    }
+                    break;
+            }
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -302,10 +291,6 @@ public class CommonRecyclerView extends RefreshRecyclerView {
                     if (canScrollDown() || mCurrentLoadStatus == LOAD_STATUS_LOADING) {
                         // 如果没有到达最底端，也就是说还可以向下滚动就什么都不处理
                         return super.onTouchEvent(e);
-                    }
-
-                    if (mLoadView != null) {
-                        mLoadViewHeight = mLoadView.getMeasuredHeight();
                     }
 
                     // 解决上拉加载更多自动滚动问题
@@ -387,7 +372,7 @@ public class CommonRecyclerView extends RefreshRecyclerView {
      * 到底加载是否可用
      */
     public void setLoadMoreEnabled(boolean enabled) {
-        if(mWrapRecyclerAdapter == null){
+        if (mWrapRecyclerAdapter == null) {
             throw new NullPointerException("you have not set adapter right now");
         }
         mLoadMoreEnabled = enabled;
@@ -398,24 +383,28 @@ public class CommonRecyclerView extends RefreshRecyclerView {
 
     /**
      * 获取头布局总个数
+     *
      * @return
      */
-    public int getHeaderViewsCount(){
-        if(mWrapRecyclerAdapter == null){
+    public int getHeaderViewsCount() {
+        if (mWrapRecyclerAdapter == null) {
             throw new NullPointerException("you have not set adapter right now");
         }
         return mWrapRecyclerAdapter.getHeaderViewsCount();
     }
+
     /**
      * 获取脚布局总个数
+     *
      * @return
      */
-    public int getFooterViewsCount(){
-        if(mWrapRecyclerAdapter == null){
+    public int getFooterViewsCount() {
+        if (mWrapRecyclerAdapter == null) {
             throw new NullPointerException("you have not set adapter right now");
         }
         return mWrapRecyclerAdapter.getFooterViewsCount();
     }
+
     /**
      * 全部数据加载完成的时候调用这个方法，
      */
@@ -449,6 +438,41 @@ public class CommonRecyclerView extends RefreshRecyclerView {
         stopRefresh();
     }
 
+    /**
+     * 获取加载下一页的高度
+     * @param changed
+     * @param l
+     * @param t
+     * @param r
+     * @param b
+     */
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (changed) {
+            if (mLoadView != null && mLoadViewHeight <= 0) {
+                mLoadViewHeight = mLoadView.getMeasuredHeight();
+            }
+        }
+    }
+
+    /**
+     * 当前LayoutManager的类型
+     */
+    public enum LayoutManagerType {
+        LinearLayout,
+        StaggeredGridLayout,
+        GridLayout
+    }
+
+    /**
+     * 设置加载下一页的方式
+     * Auto滑动到底部自动加载
+     * Pull滑动到底部手动上拉加载
+     */
+    public enum LoadMoreType {
+        Auto, Pull
+    }
 
     // 处理加载更多回调监听
     private OnLoadMoreListener mListener;
