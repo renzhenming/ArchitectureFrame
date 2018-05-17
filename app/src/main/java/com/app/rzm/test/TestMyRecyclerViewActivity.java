@@ -76,8 +76,8 @@ public class TestMyRecyclerViewActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"image,position="+position,Toast.LENGTH_SHORT).show();
             }
         });
-        mRecyclerView.setAdapter(myAdapter);
 
+        mRecyclerView.setAdapter(myAdapter);
         /**
          * RefreshViewCreator必须在所有的头部局之前设置才能有效，没有做位置的设定，默认按添加顺序显示
          */

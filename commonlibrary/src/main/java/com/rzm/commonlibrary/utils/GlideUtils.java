@@ -2,72 +2,36 @@ package com.rzm.commonlibrary.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.rzm.commonlibrary.R;
 
 import java.lang.ref.WeakReference;
 
 
 public class GlideUtils {
 
-    private static String LAST_MODIFY_TIME = "lastheadModifyTime";
-
-    public static void checkToFreeMemory(Context context) {
-        long freeMem = Runtime.getRuntime().freeMemory();
-        if (freeMem < 4 * 1024 * 1024) {
-            Glide.get(context).clearMemory();
-        }
+    public static void setCircleImageWithRing(final Context context, final String url,final ImageView imageView, int defImage){
+        if (!canLoad(context))return;
+        Glide.with(context).load(url).placeholder(defImage)
+                .transform(new GlideCircleWithRing(context,2, ContextCompat.getColor(context, R.color.gray)))
+                .diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
     }
 
-//    /**
-//     * 针对imageview
-//     * @param context
-//     * @param url
-//     * @param imageView
-//     * @param defImage
-//     * 添加signature，防止更新头像后glide显示的仍是旧头像（图片服务器地址不变，导致缓存的key不改变，这时候glide不会请求新的图片）
-//     * signature 不能为null否则会崩溃
-//     */
-//    public static void setCircleTargetImage (final Activity context, final String url, String headModifyTime, final ImageView imageView, int defImage){
-//        if (context == null)
-//            return;
-//        if (TextUtils.isEmpty(headModifyTime)){
-//            SightPlusApplication application = (SightPlusApplication) context.getApplication();
-//            headModifyTime = ProfileUtil.getHeadImageModifyTime(application);
-//        }
-//        if (TextUtils.isEmpty(headModifyTime)){
-//            headModifyTime = String.valueOf(System.currentTimeMillis());
-//        }
-//
-//        final String currentModifyTime = headModifyTime;
-//        //获取上次缓存虚化背景的时间戳
-//        final String lastModifyTime = SharedPreferencesUtil.getString(context, LAST_MODIFY_TIME);
-//        Glide.with(context).load(url).asBitmap().signature(new StringSignature(headModifyTime)).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(new BitmapImageViewTarget(imageView) {
-//            @Override
-//            protected void setResource(Bitmap resource) {
-//                RoundedBitmapDrawable circularBitmapDrawable =
-//                        RoundedBitmapDrawableFactory.build(context.getResources(), resource);
-//                circularBitmapDrawable.setCircular(true);
-//                imageView.setImageDrawable(circularBitmapDrawable);
-//                if (!TextUtils.equals(currentModifyTime,lastModifyTime)){
-//                    if (resource != null){
-//                        blurAndSaveBitmap(resource,context);
-//                        //缓存一次虚化头像后，保存当前的headModifyTime，当下一次走到这里，判断上次保存的时间戳和本次时间戳是否相同
-//                        //如果相同说明头像没有更新，所以不需要再次缓存虚化背景，如果时间戳发生变化，说明头像已经更新，需要重新缓存
-//                        SharedPreferencesUtil.insertString(context, LAST_MODIFY_TIME, currentModifyTime);
-//                    }
-//                }
-//            }
-//
-//        });
-//    }
 
     /**
      * 针对imageview
@@ -78,24 +42,17 @@ public class GlideUtils {
      * @param defImage  添加signature，防止更新头像后glide显示的仍是旧头像（图片服务器地址不变，导致缓存的key不改变，这时候glide不会请求新的图片）
      *                  signature 不能为null否则会崩溃
      */
-    /*public static void setCircleTargetImage(final Activity context, final String url, String headModifyTime, final ImageView imageView, int defImage) {
+    public static void setCircleTargetImage(final Activity context, final String url,final ImageView imageView, int defImage) {
+        if (!canLoad(context)) return;
+        MainBitmapImageViewTarget mainTarget = new MainBitmapImageViewTarget(context, imageView);
+        Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(mainTarget);
+    }
+    public static void setCircleTargetImage(final Context context, final String url,final ImageView imageView, int defImage) {
         if (context == null)
             return;
-        if (TextUtils.isEmpty(headModifyTime)) {
-            SightPlusApplication application = (SightPlusApplication) context.getApplication();
-            headModifyTime = ProfileUtil.getHeadImageModifyTime(application);
-        }
-        if (TextUtils.isEmpty(headModifyTime)) {
-            headModifyTime = String.valueOf(System.currentTimeMillis());
-        }
-
-        final String currentModifyTime = headModifyTime;
-        //获取上次缓存虚化背景的时间戳
-        final String lastModifyTime = SharedPreferencesUtil.getString(context, LAST_MODIFY_TIME);
-        MainBitmapImageViewTarget mainTarget = new MainBitmapImageViewTarget(context, imageView, currentModifyTime, lastModifyTime);
-        Glide.with(context).load(url).asBitmap().signature(new StringSignature(headModifyTime)).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(mainTarget);
-    }*/
-
+        MainBitmapImageViewTarget mainTarget = new MainBitmapImageViewTarget(context, imageView);
+        Glide.with(context).load(url).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(mainTarget);
+    }
     /**
      * 静态内部类，防止内存泄漏
      * 这里的上下文使用的是activity，需要若引用
@@ -103,16 +60,11 @@ public class GlideUtils {
      */
     private static class MainBitmapImageViewTarget extends BitmapImageViewTarget {
 
-        private final String lastModifyTime;
-        private final String currentModifyTime;
-
         private WeakReference<ImageView> reference;
-        private WeakReference<Activity> cReference;
+        private WeakReference<Context> cReference;
 
-        public MainBitmapImageViewTarget(Activity context, ImageView imageView, String currentModifyTime, String lastModifyTime) {
+        public MainBitmapImageViewTarget(Context context, ImageView imageView) {
             super(imageView);
-            this.lastModifyTime = lastModifyTime;
-            this.currentModifyTime = currentModifyTime;
             reference = new WeakReference<>(imageView);
             cReference = new WeakReference<>(context);
         }
@@ -122,48 +74,17 @@ public class GlideUtils {
             super.setResource(resource);
             if (reference != null && cReference != null) {
                 ImageView imageView = reference.get();
-                Activity context = cReference.get();
+                Context context = cReference.get();
                 if (imageView != null && context != null) {
                     RoundedBitmapDrawable circularBitmapDrawable =
                             RoundedBitmapDrawableFactory.create(context.getResources(), resource);
                     circularBitmapDrawable.setCircular(true);
                     imageView.setImageDrawable(circularBitmapDrawable);
-                    if (!TextUtils.equals(currentModifyTime, lastModifyTime)) {
-                        if (resource != null) {
-                            blurAndSaveBitmap(resource, context);
-                            //缓存一次虚化头像后，保存当前的headModifyTime，当下一次走到这里，判断上次保存的时间戳和本次时间戳是否相同
-                            //如果相同说明头像没有更新，所以不需要再次缓存虚化背景，如果时间戳发生变化，说明头像已经更新，需要重新缓存
-                            SharePreferenceUtil.setString(context, LAST_MODIFY_TIME, currentModifyTime);
-                        }
-                    }
                 }
             }
         }
     }
-//    /**
-//     * 针对imageview
-//     * @param context
-//     * @param url
-//     * @param imageView
-//     * @param defImage
-//     */
-//    public static void setListImage (final Context context, final String url, final ImageView imageView, int defImage){
-//        Glide.with(context).load(url).asBitmap().override(150,150).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(new BitmapImageViewTarget(imageView) {
-//            @Override
-//            protected void setResource(Bitmap resource) {
-//                RoundedBitmapDrawable circularBitmapDrawable =
-//                        RoundedBitmapDrawableFactory.build(context.getResources(), resource);
-//                circularBitmapDrawable.setCircular(true);
-//                imageView.setImageDrawable(circularBitmapDrawable);
-//                //缓存详情的头像虚化效果
-//                if (resource != null){
-//                    BitmapView.saveCacheBitmap(context,url,resource);
-//                }
-//
-//            }
-//
-//        });
-//    }
+
 
     /**
      * 针对imageview
@@ -175,8 +96,30 @@ public class GlideUtils {
      * @param defImage
      */
     public static void setListImage(final Context context, final String url, final ImageView imageView, int defImage) {
+        if (!canLoad(context)) return;
         CuBitmapImageViewTarget target = new CuBitmapImageViewTarget(context, imageView, url);
         Glide.with(context).load(url).asBitmap().override(150, 150).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(defImage).centerCrop().into(target);
+    }
+
+    /**
+     * 判断当前上下文是否存在
+     * @param context
+     * @return
+     */
+    private static boolean canLoad(Context context){
+        if (context == null)
+            return false;
+        if (context instanceof Activity){
+            Activity activity = (Activity) context;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (activity.isDestroyed()){
+                    return false;
+                }
+            }else if (activity.isFinishing()){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -200,57 +143,80 @@ public class GlideUtils {
         @Override
         protected void setResource(Bitmap resource) {
             super.setResource(resource);
-            /*if (imageView != null) {
+            if (imageView != null) {
                 RoundedBitmapDrawable circularBitmapDrawable =
-                        RoundedBitmapDrawableFactory.build(context.getResources(), resource);
+                        RoundedBitmapDrawableFactory.create(context.getResources(), resource);
                 circularBitmapDrawable.setCircular(true);
                 imageView.setImageDrawable(circularBitmapDrawable);
-                //缓存详情的头像虚化效果
-                if (resource != null) {
-                    BitmapView.saveCacheBitmap(context, imageUrl, resource);
-                }
-            }*/
+            }
+        }
+    }
+
+    static class GlideCircleWithRing extends BitmapTransformation {
+
+        private Paint mBorderPaint;
+        private float mBorderWidth = 4;
+
+        public GlideCircleWithRing(Context context) {
+            super(context);
+        }
+
+        public GlideCircleWithRing(Context context, int borderWidth, int borderColor) {
+            super(context);
+            mBorderWidth = Resources.getSystem().getDisplayMetrics().density * borderWidth;
+            mBorderPaint = new Paint();
+            mBorderPaint.setDither(true);
+            mBorderPaint.setAntiAlias(true);
+            mBorderPaint.setColor(borderColor);
+            mBorderPaint.setAlpha(50);
+            mBorderPaint.setStyle(Paint.Style.STROKE);
+            mBorderPaint.setStrokeWidth(mBorderWidth);
+        }
+
+
+        protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+            return circleCrop(pool, toTransform);
+        }
+
+        private Bitmap circleCrop(BitmapPool pool, Bitmap source) {
+            if (source == null) return null;
+
+            int size = (int) (Math.min(source.getWidth(), source.getHeight()) - (mBorderWidth / 2));
+            int x = (source.getWidth() - size) / 2;
+            int y = (source.getHeight() - size) / 2;
+
+            Bitmap squared = Bitmap.createBitmap(source, x, y, size, size);
+            Bitmap result = pool.get(size, size, Bitmap.Config.ARGB_8888);
+            if (result == null) {
+                result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            }
+            Canvas canvas = new Canvas(result);
+            Paint paint = new Paint();
+            //paint.setShader(new BitmapShader(squared, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP));
+            paint.setShader(new BitmapShader(squared, BitmapShader.TileMode.MIRROR, BitmapShader.TileMode.MIRROR));
+            paint.setAntiAlias(true);
+            float r = size / 2f;
+            //canvas.drawCircle(r, r, r, paint);
+            canvas.drawCircle(r, r, r - mBorderWidth, paint);
+            if (mBorderPaint != null) {
+                float borderRadius = r - mBorderWidth / 2;
+                canvas.drawCircle(r, r, borderRadius, mBorderPaint);
+            }
+            return result;
+        }
+
+        @Override
+        public String getId() {
+            return getClass().getName();
         }
     }
 
     /**
-     * bitmap虚化处理并缓存到本地
-     *
-     * @param bitmap
-     * @param mActivity
+     * 暂停请求，用于使用application context的情况下，在onDestory中取消请求
+     * @param context
      */
-    public static void blurAndSaveBitmap(Bitmap bitmap, Activity mActivity) {
-        /*Bitmap bluredBitmap = FastBlurUtil.toRectBlur(bitmap, 2, 2);
-        String state = Environment.getExternalStorageState();
-        String path = "";
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        } else {
-            if (mActivity != null) {
-                path = mActivity.getFilesDir().getAbsolutePath();
-            }
-        }
-        if (!TextUtils.isEmpty(path)) {
-            File dirFile = new File(path + "/CacheFile");
-            if (!dirFile.exists()) {
-                dirFile.mkdirs();
-            }
-            File file = new File(dirFile, "bluredBitmap");
-            //保存地址,设置的时候直接去这里取，没有再请求网络
-            SharedPreferencesUtil.insertString(mActivity, RequestWrapper.BLURED_HEAD_IMAGE, file.getAbsolutePath());
-            OutputStream outputStream = null;
-            try {
-                outputStream = new FileOutputStream(file);
-                bluredBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                outputStream.flush();
-                outputStream.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }*/
+    public static void pauseRequest(Context context){
+        Glide.with(context).pauseRequests();
     }
 
 }

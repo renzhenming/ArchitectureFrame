@@ -1,6 +1,7 @@
 package com.rzm.commonlibrary.general.web;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
@@ -532,17 +534,26 @@ public class WebViewActivity extends AppCompatActivity{
 
         }
 
-
+        //Android6.0以上的机器上，网页中的任意一个资源获取不到（比如字体），onReceivedError就会被回调，网页就很可能
+        // 显示自定义的错误界面。尤其是如果Html用了本地化技术，’ERR_FILE_NOT_FOUND’开始变得特别常见，所以并不能发生
+        // 一点错误就显示错误页面，有些错误不影响用户体验，可以忽略
+        @TargetApi(Build.VERSION_CODES.M)
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            LogUtils.e(TAG, "onReceivedError："+error);
-            Toast.makeText(getApplicationContext(),"页面加载失败",Toast.LENGTH_SHORT).show();
+            if (request.isForMainFrame()) { // 或者： if(request.getUrl().toString() .equals(getUrl()))
+                LogUtils.e(TAG, "onReceivedError：" + error);
+                Toast.makeText(getApplicationContext(), "页面加载失败", Toast.LENGTH_SHORT).show();
+            }
         }
 
+        //在API23之前,onReceivedError只有在遇到不可用的(unrecoverable)错误时，才会被调用,这里用于23之前的处理
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                return;
+            }
             LogUtils.e(TAG, "onReceivedError："+description);
             Toast.makeText(getApplicationContext(),"页面加载失败",Toast.LENGTH_SHORT).show();
         }

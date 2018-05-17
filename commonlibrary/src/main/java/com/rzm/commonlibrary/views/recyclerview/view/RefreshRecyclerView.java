@@ -65,41 +65,36 @@ public class RefreshRecyclerView extends WrapRecyclerView {
         super(context, attrs, defStyle);
     }
 
-    @Override
-    public void setAdapter(Adapter adapter) {
-        super.setAdapter(adapter);
-        addRefreshView();
-    }
-
     /**
      * 传入的RefreshViewCreator中包含有设置的刷新布局，通过添加不同的creator，
      * 实现对刷新布局的插拔式替换
      * RefreshViewCreator必须在所有的头部局之前设置才能有效，没有做位置的设定，默认按添加顺序显示
+     *
      * @param creator
      */
-    public void addRefreshViewCreator(RefreshViewCreator creator){
-        this.mRefreshViewCreator = creator;
-        addRefreshView();
-    }
+    public void addRefreshViewCreator(RefreshViewCreator creator) {
 
-    /**
-     * 最终的刷新头部局是从RefreshViewCreator中获取到，然后调用父类WrapRecyclerView的添加头部的方法
-     * 设置刷新布局
-     */
-    private void addRefreshView() {
+        if (creator == null) {
+            throw new NullPointerException("RefreshViewCreator cannot be null");
+        }
+        this.mRefreshViewCreator = creator;
+
         Adapter adapter = getAdapter();
-        if (adapter != null && mRefreshViewCreator!= null){
-            View refreshView = mRefreshViewCreator.getRefreshView(getContext(), this);
-            if (refreshView != null){
-                addHeaderView(refreshView);
-                this.mRefreshView = refreshView;
-            }
+        if (adapter == null) {
+            throw new NullPointerException("you must set Adapter before addRefreshViewCreator");
+        }
+
+        View refreshView = mRefreshViewCreator.getRefreshView(getContext(), this);
+        if (refreshView != null) {
+            addHeaderView(refreshView);
+            this.mRefreshView = refreshView;
         }
     }
 
     /**
      * 添加refreshView之后,这个view默认是作为一个view添加的，所以需要默认设置这个view隐藏，
      * 按照view的测量高度，缩进去相同的高度，只在下拉的时候显示
+     *
      * @param changed
      * @param l
      * @param t
@@ -109,13 +104,12 @@ public class RefreshRecyclerView extends WrapRecyclerView {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        if (changed){
-            if (mRefreshView != null && mRefreshViewHeight <= 0){
+        if (changed) {
+            if (mRefreshView != null && mRefreshViewHeight <= 0) {
                 mRefreshViewHeight = mRefreshView.getMeasuredHeight();
-                if (mRefreshViewHeight > 0){
+                if (mRefreshViewHeight > 0) {
                     // 隐藏头部刷新的View  marginTop  多留出1px防止无法判断是不是滚动到头部问题
-                    setRefreshViewMarginTop(-mRefreshViewHeight+1);
-                    //setRefreshViewMarginTop(-mRefreshViewHeight);
+                    setRefreshViewMarginTop(-mRefreshViewHeight + 1);
                 }
             }
         }
@@ -123,6 +117,7 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
     /**
      * 设置顶部刷新view的marginTop
+     *
      * @param marginTop
      */
     private void setRefreshViewMarginTop(int marginTop) {
@@ -130,8 +125,8 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
         MarginLayoutParams layoutParams = (MarginLayoutParams) mRefreshView.getLayoutParams();
 
-        if (marginTop < -mRefreshViewHeight+1){
-            marginTop = -mRefreshViewHeight+1;
+        if (marginTop < -mRefreshViewHeight + 1) {
+            marginTop = -mRefreshViewHeight + 1;
         }
         /*if (marginTop < -mRefreshViewHeight){
             marginTop = -mRefreshViewHeight;
@@ -144,6 +139,7 @@ public class RefreshRecyclerView extends WrapRecyclerView {
     /**
      * 在dispatch中处理按下和抬起的事件，因为recyclerView如果已经设置了条目点击事件，那么在onTouchEvent中，按下的事件
      * 不会被处理
+     *
      * @param ev
      * @return
      */
@@ -177,19 +173,19 @@ public class RefreshRecyclerView extends WrapRecyclerView {
         //int finalTopMargin = -mRefreshViewHeight+1;
         int finalTopMargin = -mRefreshViewHeight;
 
-        if (mCurrentRefreshStatus == REFRESH_STATUS_LOOSEN_REFRESHING){
+        if (mCurrentRefreshStatus == REFRESH_STATUS_LOOSEN_REFRESHING) {
             //这个状态下，松开之后的finalTopMargin应该是0，也就是当刷新view的高度正好完全出现的高度
             finalTopMargin = 0;
             //设置状态为正在刷新
             mCurrentRefreshStatus = REFRESH_STATUS_REFRESHING;
 
             //这个回调用于处理刷新布局的显示
-            if(mRefreshViewCreator != null){
+            if (mRefreshViewCreator != null) {
                 mRefreshViewCreator.onRefreshing();
             }
 
             //这个回调用于刷新数据
-            if (mListener != null){
+            if (mListener != null) {
                 mListener.onRefresh();
             }
 
@@ -198,7 +194,7 @@ public class RefreshRecyclerView extends WrapRecyclerView {
         //得到了起始位置和最终位置，使用值动画平滑移动view到最终位置
         ValueAnimator animator = ValueAnimator.ofFloat(currentTopMargin, finalTopMargin);
         //动画的时长不能写死，应该根据初始位置和最终位置间的距离动态设置，以保证动画的视觉效果
-        int duration = Math.abs(currentTopMargin-finalTopMargin);
+        int duration = Math.abs(currentTopMargin - finalTopMargin);
         animator.setDuration(duration);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -215,6 +211,7 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
     /**
      * 处理手指按下的move事件
+     *
      * @param e
      * @return
      */
@@ -261,41 +258,26 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
     /**
      * 更新下拉过程中的状态，并回调
+     *
      * @param marginTop
      */
     private void updateRefreshStatus(int marginTop) {
         //当前是没有进行下拉
-        if (marginTop <= -mRefreshViewHeight){
+        if (marginTop <= -mRefreshViewHeight) {
             mCurrentRefreshStatus = REFRESH_STATUS_NORMAL;
-        }else if (marginTop < 0){
+        } else if (marginTop < 0) {
             //marginTop小于0大于-mRefreshViewHeight的过程中，是view被不断拉出的过程
             mCurrentRefreshStatus = REFRESH_STATUS_PULL_DOWN;
-        }else{
+        } else {
             mCurrentRefreshStatus = REFRESH_STATUS_LOOSEN_REFRESHING;
         }
         //这是下拉过程中三个状态，正在刷新状态将在onMoveUp中回调
-        if (mRefreshViewCreator != null){
-            mRefreshViewCreator.onPull(marginTop,mRefreshViewHeight,mCurrentRefreshStatus);
+        if (mRefreshViewCreator != null) {
+            mRefreshViewCreator.onPull(marginTop, mRefreshViewHeight, mCurrentRefreshStatus);
         }
     }
 
     /**
-     * @return Whether it is possible for the child view of this layout to
-     * scroll up. Override this if the child view is a custom view.
-     * 判断是不是滚动到了最顶部，这个是从SwipeRefreshLayout里面copy过来的源代码
-     *
-     * 如下方法已过时:
-     *
-     * if (android.os.Build.VERSION.SDK_INT < 14) {
-     *    return ViewCompat.canScrollVertically(this, -1) || this.getScrollY() > 0;
-     * } else {
-     *    return ViewCompat.canScrollVertically(this, -1);
-     * }
-     *
-     * 方法 canScrollVertically(int direction):
-     *
-     * Check if this view can be scrolled vertically in a certain direction.
-     * params Negative to check scrolling up, positive to check scrolling down.
      * @return true if this view can be scrolled in the specified direction, false otherwise.
      */
     private boolean canScrollUp() {
@@ -314,10 +296,11 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
     /**
      * 设置下拉刷新是否可用
+     *
      * @param enabled
      */
     public void setRefreshEnabled(boolean enabled) {
-        if(mWrapRecyclerAdapter == null){
+        if (mWrapRecyclerAdapter == null) {
             throw new NullPointerException("you have not set adapter right now");
         }
         mPullRefreshEnabled = enabled;
@@ -328,24 +311,27 @@ public class RefreshRecyclerView extends WrapRecyclerView {
 
     /**
      * 停止刷新,刷新完成后调用此方法
+     * 这个方法只提供给RefreshRecyclerView调用
      */
     public void stopRefresh() {
-         if (!(this instanceof RefreshRecyclerView)){
-             throw new IllegalStateException("you should use onRefreshComplete to finish refresh in CommonRecyclerView");
-         }
-         mCurrentRefreshStatus = REFRESH_STATUS_NORMAL;
-         restoreRefreshView();
-         if (mRefreshViewCreator != null) {
-             mRefreshViewCreator.onStopRefresh();
-         }
-     }
+        if (!(this instanceof RefreshRecyclerView)) {
+            throw new IllegalStateException("you should use onRefreshComplete to finish refresh in CommonRecyclerView");
+        }
+        mCurrentRefreshStatus = REFRESH_STATUS_NORMAL;
+        restoreRefreshView();
+        if (mRefreshViewCreator != null) {
+            mRefreshViewCreator.onStopRefresh();
+        }
+    }
 
 
     // 处理刷新回调监听
     private OnRefreshListener mListener;
+
     public void setOnRefreshListener(OnRefreshListener listener) {
         this.mListener = listener;
     }
+
     public interface OnRefreshListener {
         void onRefresh();
     }
