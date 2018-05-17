@@ -34,7 +34,7 @@ public class RetrofitEngine implements IHttpEngine {
 
     @Override
     public void get(final boolean cache, final Context context, String url, Map<String, Object> params, final ICallBack callBack) {
-        final String paramsUrl = HttpUtils.jointParams(url, params);
+        final String paramsUrl = HttpUtils.printUrlWithParams(url, params);
         LogUtils.e(TAG,"get url:"+paramsUrl);
 
         if (cache) {
@@ -81,7 +81,7 @@ public class RetrofitEngine implements IHttpEngine {
     @Override
     public void post(final boolean cache, final Context context, String url, Map<String, Object> params, final ICallBack callBack) {
 
-        final String paramsUrl = HttpUtils.jointParams(url, params);
+        final String paramsUrl = HttpUtils.printUrlWithParams(url, params);
         LogUtils.e(TAG,"post url:"+paramsUrl);
 
         if (cache) {

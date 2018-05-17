@@ -8,14 +8,24 @@
     tools:context="com.app.rzm.test.TestHttpUtilsActivity">
 
     <Button
-        android:onClick="start"
+        android:onClick="get"
         android:text="get"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:onClick="post"
+        android:text="post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:onClick="upload"
+        android:text="upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
-        android:onClick="upload"
-        android:text="upload"
+        android:onClick="download"
+        android:text="download"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

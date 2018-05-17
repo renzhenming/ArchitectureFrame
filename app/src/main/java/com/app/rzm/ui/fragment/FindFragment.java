@@ -44,7 +44,7 @@ public class FindFragment extends BaseFragment implements BannerViewPager.Banner
                 .cache(true)
                 .execute(new CallBackImpl<DiscoverListResult>() {
                     @Override
-                    protected void onSuccess(DiscoverListResult result) {
+                    public void onSuccess(DiscoverListResult result) {
                         // 先显示列表
                         showListData(result.getData().getCategories().getCategory_list());
                         addBannerView(result.getData().getRotate_banner().getBanners());

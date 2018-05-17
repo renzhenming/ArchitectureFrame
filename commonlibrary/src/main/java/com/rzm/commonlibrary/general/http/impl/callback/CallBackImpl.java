@@ -42,11 +42,16 @@ public abstract class CallBackImpl<T>  implements ICallBack {
     }
 
     @Override
-    public void onDownloadProgress(int progress) {
-        downloadProgress(progress);
+    public void onDownloadProgress(long total, long current) {
+        downloadProgress(total,current);
     }
 
-    public void downloadProgress(int progress) {
+    /**
+     * 监听下载进度重写这个方法，不要重写onDownloadProgress
+     * @param total
+     * @param current
+     */
+    public void downloadProgress(long total, long current) {
 
     }
 
@@ -55,6 +60,11 @@ public abstract class CallBackImpl<T>  implements ICallBack {
         uploadProgress(total,current);
     }
 
+    /**
+     * 监听上传进度重写这个方法，不要重写onUploadProgress
+     * @param total
+     * @param current
+     */
     public void uploadProgress(long total, long current) {
 
     }
@@ -67,7 +77,7 @@ public abstract class CallBackImpl<T>  implements ICallBack {
     }
 
     //在执行成功数据解析之后再次执行success
-    protected abstract void onSuccess(T result);
+    public abstract void onSuccess(T result);
 
     //添加参数之后开始执行，回调过去
     public void onPreExecute(){

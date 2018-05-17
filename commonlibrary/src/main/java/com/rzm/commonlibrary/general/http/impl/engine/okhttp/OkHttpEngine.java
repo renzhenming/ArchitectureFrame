@@ -1,11 +1,8 @@
 package com.rzm.commonlibrary.general.http.impl.engine.okhttp;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.rzm.commonlibrary.general.http.base.HttpCacheUtils;
 import com.rzm.commonlibrary.general.http.base.ICallBack;
@@ -14,12 +11,9 @@ import com.rzm.commonlibrary.general.http.base.IHttpEngine;
 import com.rzm.commonlibrary.utils.LogUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,12 +26,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okio.Buffer;
-import okio.BufferedSink;
-import okio.ForwardingSink;
-import okio.Okio;
-import okio.Source;
-
 
 /**
  * Created by rzm on 2017/8/20.
@@ -51,11 +39,11 @@ public class OkHttpEngine implements IHttpEngine {
     private static Handler mHandler = new Handler();
 
 
-    /***************************
+    /***********************************************************************************************
      *
-     * post请求
+     * ***********************************      post请求          ***********************************
      *
-     ***************************/
+     **********************************************************************************************/
 
 
     @Override
@@ -63,7 +51,7 @@ public class OkHttpEngine implements IHttpEngine {
 
         new OkHttpClient.Builder().connectTimeout(10, TimeUnit.MINUTES);
 
-        final String paramsUrl = HttpUtils.jointParams(url, params);  //打印
+        final String paramsUrl = HttpUtils.printUrlWithParams(url, params);  //打印
         LogUtils.e(TAG, "post url:"+paramsUrl);
 
         if (cache) {
@@ -77,7 +65,6 @@ public class OkHttpEngine implements IHttpEngine {
                         callBack.onSuccess(cacheJson);
                     }
                 });
-
             }
         }
 
@@ -134,37 +121,69 @@ public class OkHttpEngine implements IHttpEngine {
         );
     }
 
+    private RequestBody appendBody(Map<String, Object> params) {
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        addParams(builder, params);
+        return builder.build();
+    }
 
-    /***************************
-     *
-     * get请求
-     *
-     ***************************/
+    // 添加参数
+    private void addParams(MultipartBody.Builder builder, Map<String, Object> params) {
+        if (params != null && !params.isEmpty()) {
+            for (String key : params.keySet()) {
+                builder.addFormDataPart(key, params.get(key) + "");
+                Object value = params.get(key);
+                if (value instanceof File) {
+                    // 处理文件 --> Object File
+                    File file = (File) value;
+                    builder.addFormDataPart(key, file.getName(), RequestBody
+                            .create(MediaType.parse(OkHttpUtils.guessMimeType(file
+                                    .getAbsolutePath())), file));
+                } else if (value instanceof List) {
+                    // 代表提交的是 List集合
+                    try {
+                        List<File> listFiles = (List<File>) value;
+                        for (int i = 0; i < listFiles.size(); i++) {
+                            // 获取文件
+                            File file = listFiles.get(i);
+                            builder.addFormDataPart(key + i, file.getName(), RequestBody
+                                    .create(MediaType.parse(OkHttpUtils.guessMimeType(file
+                                            .getAbsolutePath())), file));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    builder.addFormDataPart(key, value + "");
+                }
+            }
+        }
+    }
 
+    /***********************************************************************************************
+     *
+     * ***********************************      get请求           ***********************************
+     *
+     **********************************************************************************************/
 
     @Override
     public void get(final boolean cache, final Context context, String url, Map<String, Object> params, final ICallBack callBack) {
 
-        final String paramsUrl = HttpUtils.jointParams(url, params);
+        final String paramsUrl = HttpUtils.printUrlWithParams(url, params);
         LogUtils.e(TAG,"get url:"+paramsUrl);
 
         if (cache) {
             final String cacheJson = HttpCacheUtils.getInstance().getCache(context,paramsUrl);
-
             if (!TextUtils.isEmpty(cacheJson)) {
                 LogUtils.e(TAG, "get cache：" + cacheJson);
-
                 //获取到缓存，直接执行成功方法
                 mHandler.post(new Runnable() {
-
                     @Override
                     public void run() {
-
                         callBack.onSuccess(cacheJson);
-
                     }
                 });
-
             }
         }
 
@@ -175,7 +194,6 @@ public class OkHttpEngine implements IHttpEngine {
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, final IOException e) {
-
                 mHandler.post(new Runnable() {
 
                     @Override
@@ -183,7 +201,6 @@ public class OkHttpEngine implements IHttpEngine {
                         callBack.onError(e);
                     }
                 });
-
             }
 
             @Override
@@ -206,7 +223,6 @@ public class OkHttpEngine implements IHttpEngine {
                         callBack.onSuccess(result);
                     }
                 });
-
                 LogUtils.e(TAG,"get result:"+ result);
 
                 if (cache) {
@@ -218,13 +234,11 @@ public class OkHttpEngine implements IHttpEngine {
         });
     }
 
-
-    /***************************
+    /***********************************************************************************************
      *
-     * download请求
+     * ***********************************      download请求      ***********************************
      *
-     ***************************/
-
+     **********************************************************************************************/
 
     @Override
     public void download(final String url,final ICallBack callBack) {
@@ -235,6 +249,7 @@ public class OkHttpEngine implements IHttpEngine {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        LogUtils.e(TAG,"download file error:"+url);
                         callBack.onError(e);
                     }
                 });
@@ -247,22 +262,25 @@ public class OkHttpEngine implements IHttpEngine {
                 int len = 0;
                 FileOutputStream fos = null;
                 // 储存下载文件的目录
-                String savePath = isExistDir(DOWNLOAD_SAVE_PATH);
+                String savePath = OkHttpUtils.isExistDir(DOWNLOAD_SAVE_PATH);
+
                 try {
                     is = response.body().byteStream();
-                    long total = response.body().contentLength();
-                    File file = new File(savePath, getNameFromUrl(url));
+                    final long total = response.body().contentLength();
+                    File file = new File(savePath, OkHttpUtils.getNameFromUrl(url));
+                    LogUtils.e(TAG,"download file save to:"+file.getAbsolutePath());
                     fos = new FileOutputStream(file);
                     long sum = 0;
                     while ((len = is.read(buf)) != -1) {
                         fos.write(buf, 0, len);
                         sum += len;
-                        final int progress = (int) (sum * 1.0f / total * 100);
                         // 下载中
+                        final long currentProgress = sum;
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callBack.onDownloadProgress(progress);
+                                LogUtils.e(TAG,"download file progress:"+currentProgress+"/"+total);
+                                callBack.onDownloadProgress(total, currentProgress);
                             }
                         });
                     }
@@ -271,6 +289,7 @@ public class OkHttpEngine implements IHttpEngine {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            LogUtils.e(TAG,"download file finish");
                             callBack.onSuccess("");
                         }
                     });
@@ -278,6 +297,7 @@ public class OkHttpEngine implements IHttpEngine {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            LogUtils.e(TAG,"download file error:"+e.toString());
                             callBack.onError(e);
                         }
                     });
@@ -297,23 +317,23 @@ public class OkHttpEngine implements IHttpEngine {
         });
     }
 
-    /***************************
+    /***********************************************************************************************
      *
-     * upload请求
+     * ***********************************       upload请求       ***********************************
      *
-     ***************************/
+     **********************************************************************************************/
 
     @Override
     public void upload(String path, String url, final ICallBack callBack) {
         File file = new File(path);
-        if (!file.exists()){
+        if (!file.isFile() && !file.exists()){
             throw new RuntimeException("file not found");
         }
-
+        LogUtils.e(TAG,"upload file:"+file.getAbsolutePath());
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.getName(), RequestBody.create
-                        (MediaType.parse(guessMimeType(file.getAbsolutePath())),file))
+                        (MediaType.parse(OkHttpUtils.guessMimeType(file.getAbsolutePath())),file))
                 .build();
 
         //静态代理，监听上传进度
@@ -323,6 +343,7 @@ public class OkHttpEngine implements IHttpEngine {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        LogUtils.e(TAG,"upload file progress:"+current+"/"+total + " is finish "+done);
                         callBack.onUploadProgress(total, current);
                         if (done){
                             callBack.onSuccess(null);
@@ -343,6 +364,7 @@ public class OkHttpEngine implements IHttpEngine {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        LogUtils.e(TAG,"upload file error:"+e.toString());
                         callBack.onError(e);
                     }
                 });
@@ -359,147 +381,6 @@ public class OkHttpEngine implements IHttpEngine {
         });
     }
 
-    class ProgressRequestBody extends RequestBody{
-
-        private RequestBody mRequestBody;
-        private ProgressListener mProgressListener;
-        private long mCurrentLength;
-        private long mContentLength;
-
-        public ProgressRequestBody(RequestBody requestBody) {
-            this.mRequestBody = requestBody;
-        }
-
-        public ProgressRequestBody(MultipartBody requestBody, ProgressListener progressListener) {
-            this.mRequestBody = requestBody;
-            this.mProgressListener = progressListener;
-        }
-
-        @Override
-        public long contentLength() throws IOException {
-            return mRequestBody.contentLength();
-        }
-
-        @Override
-        public MediaType contentType() {
-            return mRequestBody.contentType();
-        }
-
-        @Override
-        public void writeTo(BufferedSink sink) throws IOException {
-            if (mContentLength != -1){
-                mContentLength = contentLength();
-            }
-            //获取当前写了多少数据？BufferedSink Sink 就是一个服务器的输出流
-            //ForwardingSink仍然是一个代理
-            ForwardingSink forwardingSink = new ForwardingSink(sink) {
-                @Override
-                public void write(Buffer source, long byteCount) throws IOException {
-                    //每次写都会来到这里
-                    mCurrentLength += byteCount;
-                    if (mProgressListener != null){
-
-                        if (mContentLength == mCurrentLength){
-                            mProgressListener.onProgress(mContentLength,mCurrentLength,true);
-                        }else{
-                            mProgressListener.onProgress(mContentLength,mCurrentLength,false);
-                        }
-                    }
-                    super.write(source, byteCount);
-                }
-            };
-
-            BufferedSink bufferedSink = Okio.buffer(forwardingSink);
-            mRequestBody.writeTo(bufferedSink);
-            bufferedSink.flush();
-        }
-    }
-
-    interface ProgressListener {
-        void onProgress(long total, long current, boolean done);
-    }
-
-
-    /**
-     * @param saveDir
-     * @return
-     * @throws IOException
-     * 判断下载目录是否存在
-     */
-    private String isExistDir(String saveDir) throws IOException {
-        // 下载位置
-        File downloadFile = new File(Environment.getExternalStorageDirectory(), saveDir);
-        if (!downloadFile.mkdirs()) {
-            downloadFile.createNewFile();
-        }
-        String savePath = downloadFile.getAbsolutePath();
-        return savePath;
-    }
-
-    /**
-     * @param url
-     * @return
-     * 从下载连接中解析出文件名
-     */
-    @NonNull
-    private String getNameFromUrl(String url) {
-        return url.substring(url.lastIndexOf("/") + 1);
-    }
-
-    /**
-     * 组装post请求参数body
-     */
-    protected RequestBody appendBody(Map<String, Object> params) {
-        MultipartBody.Builder builder = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM);
-        addParams(builder, params);
-        return builder.build();
-    }
-
-    // 添加参数
-    private void addParams(MultipartBody.Builder builder, Map<String, Object> params) {
-        if (params != null && !params.isEmpty()) {
-            for (String key : params.keySet()) {
-                builder.addFormDataPart(key, params.get(key) + "");
-                Object value = params.get(key);
-                if (value instanceof File) {
-                    // 处理文件 --> Object File
-                    File file = (File) value;
-                    builder.addFormDataPart(key, file.getName(), RequestBody
-                            .create(MediaType.parse(guessMimeType(file
-                                    .getAbsolutePath())), file));
-                } else if (value instanceof List) {
-                    // 代表提交的是 List集合
-                    try {
-                        List<File> listFiles = (List<File>) value;
-                        for (int i = 0; i < listFiles.size(); i++) {
-                            // 获取文件
-                            File file = listFiles.get(i);
-                            builder.addFormDataPart(key + i, file.getName(), RequestBody
-                                    .create(MediaType.parse(guessMimeType(file
-                                            .getAbsolutePath())), file));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    builder.addFormDataPart(key, value + "");
-                }
-            }
-        }
-    }
-
-    /**
-     * 猜测文件类型
-     */
-    private String guessMimeType(String path) {
-        FileNameMap fileNameMap = URLConnection.getFileNameMap();
-        String contentTypeFor = fileNameMap.getContentTypeFor(path);
-        if (contentTypeFor == null) {
-            contentTypeFor = "application/octet-stream";
-        }
-        return contentTypeFor;
-    }
 
 
 }

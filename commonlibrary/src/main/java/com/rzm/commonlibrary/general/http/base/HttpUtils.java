@@ -228,6 +228,9 @@ public class HttpUtils{
             download(mUrl,callBack);
         }
         if (mType == UPLOAD_TYPE){
+            if (mPath == null){
+                throw new NullPointerException("you have not set upload file path ,use path(xxx) to set");
+            }
             upload(mPath,mUrl,callBack);
         }
         return this;
@@ -238,7 +241,7 @@ public class HttpUtils{
     /**
      * 拼接参数（为了打印显示提供）
      */
-    public static String jointParams(String url, Map<String, Object> params) {
+    public static String printUrlWithParams(String url, Map<String, Object> params) {
         if (params == null || params.size() <= 0) {
             return url;
         }

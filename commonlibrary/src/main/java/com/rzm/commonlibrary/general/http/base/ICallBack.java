@@ -16,7 +16,7 @@ public interface ICallBack {
 
     void onSuccess(String result);
 
-    void onDownloadProgress(int progress);
+    void onDownloadProgress(long total,long current);
 
     void onUploadProgress(long total,long current);
 
@@ -38,7 +38,8 @@ public interface ICallBack {
         }
 
         @Override
-        public void onDownloadProgress(int progress) {
+        public void onDownloadProgress(long total, long current) {
+
         }
 
         @Override
