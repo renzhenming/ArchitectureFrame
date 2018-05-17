@@ -34,18 +34,35 @@ public class OkHttpEngine implements IHttpEngine {
 
     private static final String TAG = "OkHttpEngine";
     private static final String DOWNLOAD_SAVE_PATH = "Download_File";
-    private static OkHttpClient mOkHttpClient = new OkHttpClient();
 
     private static Handler mHandler = new Handler();
+    private static volatile OkHttpEngine mOkHttpEngine;
 
+    private OkHttpClient mOkHttpClient;
+
+    private OkHttpEngine() {
+    }
+
+    private OkHttpEngine(OkHttpClient okHttpClient) {
+        this.mOkHttpClient = okHttpClient;
+    }
+
+    public static OkHttpEngine initClient(OkHttpClient okHttpClient) {
+        if (mOkHttpEngine == null){
+            synchronized (OkHttpEngine.class){
+                if (mOkHttpEngine == null){
+                    mOkHttpEngine = new OkHttpEngine(okHttpClient);
+                }
+            }
+        }
+        return mOkHttpEngine;
+    }
 
     /***********************************************************************************************
      *
      * ***********************************      post请求          ***********************************
      *
      **********************************************************************************************/
-
-
     @Override
     public void post(final boolean cache, final Context context, String url, Map<String, Object> params, final ICallBack callBack) {
 

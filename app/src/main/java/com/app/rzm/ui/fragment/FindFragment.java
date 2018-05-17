@@ -40,7 +40,7 @@ public class FindFragment extends BaseFragment implements BannerViewPager.Banner
     @Override
     protected void initData() {
 
-        HttpUtils.with(context).exchangeEngine(new OkHttpEngine()).url("http://is.snssdk.com/2/essay/discovery/v3/?").addParams("iid",6152551759L).addParams("aid",7)
+        HttpUtils.with(context).url("http://is.snssdk.com/2/essay/discovery/v3/?").addParams("iid",6152551759L).addParams("aid",7)
                 .cache(true)
                 .execute(new CallBackImpl<DiscoverListResult>() {
                     @Override

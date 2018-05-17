@@ -8,6 +8,10 @@ import com.rzm.commonlibrary.general.http.base.HttpUtils;
 import com.rzm.commonlibrary.general.http.impl.cache.SPCacheEngine;
 import com.rzm.commonlibrary.general.http.impl.engine.okhttp.OkHttpEngine;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+
 /**
  * Created by rzm on 2017/7/22.
  */
@@ -21,12 +25,10 @@ public class MyApplication extends BaseApplication {
         super.onCreate();
         context = this;
 
+        initNet();
 
-        //设置网络引擎
-        HttpUtils.initHttpEngine(new OkHttpEngine());
-        HttpUtils.initCacheEngine(new SPCacheEngine());
 
-/*.initCacheEngine(new SPCacheEngine(this)*/
+        /*.initCacheEngine(new SPCacheEngine(this)*/
         //HttpCacheUtils.initHttpEngine(new SPCacheEngine(this));
 
         /*PluginHelper.getInstance().applicationOnCreate(getBaseContext()); //must behind super.onCreate()
@@ -36,6 +38,19 @@ public class MyApplication extends BaseApplication {
         } catch (RemoteException e) {
             e.printStackTrace();
         }*/
+    }
+
+    private void initNet() {
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
+                .readTimeout(10000L, TimeUnit.MILLISECONDS)
+                .writeTimeout(10000L,TimeUnit.MILLISECONDS)
+                .build();
+        OkHttpEngine okHttpEngine = OkHttpEngine.initClient(okHttpClient);
+
+        HttpUtils.initHttpEngine(okHttpEngine);
+        HttpUtils.initCacheEngine(new SPCacheEngine());
     }
 
     @Override
