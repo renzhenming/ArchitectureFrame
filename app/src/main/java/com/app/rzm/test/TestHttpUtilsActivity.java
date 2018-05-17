@@ -26,23 +26,24 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
                 .cache(true)
                 .get()
                 .url("http://is.snssdk.com/2/essay/discovery/v3/")
-                .addParams("iid","6152551759")
-                .addParams("aid","7")
+                .addParams("iid", "6152551759")
+                .addParams("aid", "7")
                 .execute(new CallBackImpl<String>() {
 
                     @Override
                     public void onPreExecute() {
                         super.onPreExecute();
-                        Toast.makeText(getApplicationContext(),"加载中",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "加载中", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onError(final Exception e) {
-                        Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
                     }
+
                     @Override
                     public void onSuccess(final String result) {
-                        Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                     }
 
                 });
@@ -53,23 +54,24 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
                 .cache(true)
                 .post()
                 .url("http://is.snssdk.com/2/essay/discovery/v3/")
-                .addParams("iid","6152551759")
-                .addParams("aid","7")
+                .addParams("iid", "6152551759")
+                .addParams("aid", "7")
                 .execute(new CallBackImpl<String>() {
 
                     @Override
                     public void onPreExecute() {
                         super.onPreExecute();
-                        Toast.makeText(getApplicationContext(),"加载中",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "加载中", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onError(final Exception e) {
-                        Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
                     }
+
                     @Override
                     public void onSuccess(final String result) {
-                        Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                     }
 
                 });
@@ -77,7 +79,7 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
 
     public void upload(View view) {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath()
-                + File.separator+"input.mp4";
+                + File.separator + "input.mp4";
         String url = "https://api.saiwuquan.com/api/upload";
         HttpUtils.with(this)
                 .upload()
@@ -88,25 +90,25 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
                     @Override
                     public void onPreExecute() {
                         super.onPreExecute();
-                        Toast.makeText(getApplicationContext(),"开始上传",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "开始上传", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        Log.i("tag","uploadComplete");
-                        Toast.makeText(getApplicationContext(),"上传完成",Toast.LENGTH_SHORT).show();
+                        Log.i("tag", "uploadComplete");
+                        Toast.makeText(getApplicationContext(), "上传完成", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Log.i("tag","onError:"+e.toString());
-                        Toast.makeText(getApplicationContext(),"上传失败。。。"+e.toString(),Toast.LENGTH_SHORT).show();
+                        Log.i("tag", "onError:" + e.toString());
+                        Toast.makeText(getApplicationContext(), "上传失败。。。" + e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void uploadProgress(long total, long current) {
                         super.uploadProgress(total, current);
-                        Log.i("tag","uploadProgress:"+total+"/"+current);
+                        Log.i("tag", "uploadProgress:" + total + "/" + current);
                     }
 
                 });
@@ -120,7 +122,7 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
                     @Override
                     public void onPreExecute() {
                         super.onPreExecute();
-                        Toast.makeText(getApplicationContext(),"开始下载",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "开始下载", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -130,13 +132,14 @@ public class TestHttpUtilsActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(String result) {
-                        Toast.makeText(getApplicationContext(),"下载完成",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "下载完成", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Toast.makeText(getApplicationContext(),"下载失败。。。"+e.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "下载失败。。。" + e.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 }
