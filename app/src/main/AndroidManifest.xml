@@ -59,15 +59,17 @@
             android:name=".test.TestPasswordKeyboardActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".test.TestMyRecyclerViewActivity" >
+
+        </activity>
+        <activity android:name=".test.TextCustomeViewActivity" />
+        <activity android:name=".test.TestAlphabetViewActivity" />
+        <activity android:name=".test.TestHttpUtilsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".test.TextCustomeViewActivity" />
-        <activity android:name=".test.TestAlphabetViewActivity" />
-        <activity android:name=".test.TestHttpUtilsActivity"></activity>
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
         <activity android:name=".test.TestFixDexActivity" />

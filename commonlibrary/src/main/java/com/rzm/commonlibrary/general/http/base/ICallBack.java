@@ -18,7 +18,8 @@ public interface ICallBack {
 
     void onDownloadProgress(int progress);
 
-    void onUploadProgress(int progress);
+    void onUploadProgress(long total,long current);
+
 
     ICallBack DEFAULT_CALL_BACK = new ICallBack() {
         @Override
@@ -41,8 +42,9 @@ public interface ICallBack {
         }
 
         @Override
-        public void onUploadProgress(int progress) {
+        public void onUploadProgress(long total, long current) {
 
         }
+
     };
 }

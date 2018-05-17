@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.rzm.commonlibrary.general.http.base.HttpCacheUtils;
 import com.rzm.commonlibrary.general.http.base.ICallBack;
@@ -13,6 +14,7 @@ import com.rzm.commonlibrary.general.http.base.IHttpEngine;
 import com.rzm.commonlibrary.utils.LogUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.Buffer;
 import okio.BufferedSink;
+import okio.ForwardingSink;
 import okio.Okio;
 import okio.Source;
 
@@ -46,6 +49,7 @@ public class OkHttpEngine implements IHttpEngine {
     private static OkHttpClient mOkHttpClient = new OkHttpClient();
 
     private static Handler mHandler = new Handler();
+
 
     /***************************
      *
@@ -303,27 +307,34 @@ public class OkHttpEngine implements IHttpEngine {
     public void upload(String path, String url, final ICallBack callBack) {
         File file = new File(path);
         if (!file.exists()){
-            return;
+            throw new RuntimeException("file not found");
         }
 
-        RequestBody requestBody = new MultipartBody.Builder()
+        MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(), createCustomRequestBody(MultipartBody.FORM, file, new ProgressListener() {
-                    @Override
-                    public void onProgress(final long totalBytes, final long remainingBytes, boolean done) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callBack.onUploadProgress((int) ((totalBytes - remainingBytes) * 100 / totalBytes));
-                            }
-                        });
-                    }
-                }))
+                .addFormDataPart("file", file.getName(), RequestBody.create
+                        (MediaType.parse(guessMimeType(file.getAbsolutePath())),file))
                 .build();
+
+        //静态代理，监听上传进度
+        ProgressRequestBody body = new ProgressRequestBody(requestBody, new ProgressListener() {
+            @Override
+            public void onProgress(final long total, final long current, final boolean done) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onUploadProgress(total, current);
+                        if (done){
+                            callBack.onSuccess(null);
+                        }
+                    }
+                });
+            }
+        });
 
         Request request = new Request.Builder()
                 .url(url)
-                .post(requestBody)
+                .post(body)
                 .build();
 
         mOkHttpClient.newCall(request).enqueue(new Callback() {
@@ -348,38 +359,64 @@ public class OkHttpEngine implements IHttpEngine {
         });
     }
 
+    class ProgressRequestBody extends RequestBody{
 
-    public RequestBody createCustomRequestBody(final MediaType contentType, final File file, final ProgressListener listener) {
-        return new RequestBody() {
-            @Override public MediaType contentType() {
-                return contentType;
+        private RequestBody mRequestBody;
+        private ProgressListener mProgressListener;
+        private long mCurrentLength;
+        private long mContentLength;
+
+        public ProgressRequestBody(RequestBody requestBody) {
+            this.mRequestBody = requestBody;
+        }
+
+        public ProgressRequestBody(MultipartBody requestBody, ProgressListener progressListener) {
+            this.mRequestBody = requestBody;
+            this.mProgressListener = progressListener;
+        }
+
+        @Override
+        public long contentLength() throws IOException {
+            return mRequestBody.contentLength();
+        }
+
+        @Override
+        public MediaType contentType() {
+            return mRequestBody.contentType();
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+            if (mContentLength != -1){
+                mContentLength = contentLength();
             }
+            //获取当前写了多少数据？BufferedSink Sink 就是一个服务器的输出流
+            //ForwardingSink仍然是一个代理
+            ForwardingSink forwardingSink = new ForwardingSink(sink) {
+                @Override
+                public void write(Buffer source, long byteCount) throws IOException {
+                    //每次写都会来到这里
+                    mCurrentLength += byteCount;
+                    if (mProgressListener != null){
 
-            @Override public long contentLength() {
-                return file.length();
-            }
-
-            @Override public void writeTo(BufferedSink sink) throws IOException {
-                Source source;
-                try {
-                    source = Okio.source(file);
-                    //sink.writeAll(source);
-                    Buffer buf = new Buffer();
-                    Long remaining = contentLength();
-                    for (long readCount; (readCount = source.read(buf, 2048)) != -1; ) {
-                        sink.write(buf, readCount);
-                        listener.onProgress(contentLength(), remaining -= readCount, remaining == 0);
-
+                        if (mContentLength == mCurrentLength){
+                            mProgressListener.onProgress(mContentLength,mCurrentLength,true);
+                        }else{
+                            mProgressListener.onProgress(mContentLength,mCurrentLength,false);
+                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    super.write(source, byteCount);
                 }
-            }
-        };
+            };
+
+            BufferedSink bufferedSink = Okio.buffer(forwardingSink);
+            mRequestBody.writeTo(bufferedSink);
+            bufferedSink.flush();
+        }
     }
 
     interface ProgressListener {
-        void onProgress(long totalBytes, long remainingBytes, boolean done);
+        void onProgress(long total, long current, boolean done);
     }
 
 

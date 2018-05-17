@@ -51,11 +51,11 @@ public abstract class CallBackImpl<T>  implements ICallBack {
     }
 
     @Override
-    public void onUploadProgress(int progress) {
-        uploadProgress(progress);
+    public void onUploadProgress(long total, long current) {
+        uploadProgress(total,current);
     }
 
-    public void uploadProgress(int progress) {
+    public void uploadProgress(long total, long current) {
 
     }
 
