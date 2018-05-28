@@ -103,7 +103,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     testCompile 'junit:junit:4.12'
 
-    compile 'com.github.yangjie10930:EpMedia:v0.9.5'
+    //compile 'com.github.yangjie10930:EpMedia:v0.9.5'
 }
 
 //////////--------------------AOP配置-------------------///////////////
@@ -152,3 +152,4 @@ variants.all { variant ->
     }
 }
 //////////--------------------AOP配置-------------------///////////////
+

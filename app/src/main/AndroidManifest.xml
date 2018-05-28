@@ -58,14 +58,10 @@
         <activity
             android:name=".test.TestPasswordKeyboardActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".test.TestMyRecyclerViewActivity" >
-
-        </activity>
+        <activity android:name=".test.TestMyRecyclerViewActivity" />
         <activity android:name=".test.TextCustomeViewActivity" />
         <activity android:name=".test.TestAlphabetViewActivity" />
-        <activity android:name=".test.TestHttpUtilsActivity">
-
-        </activity>
+        <activity android:name=".test.TestHttpUtilsActivity" />
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
         <activity android:name=".test.TestFixDexActivity" />
@@ -74,22 +70,22 @@
         <activity android:name=".test.TestCommonDialogActivity" />
         <activity android:name=".test.TestDaoSupportActivity" />
         <activity android:name=".test.TestSImmerBarActivity" />
-        <activity android:name=".test.TestFFmpegActivity" >
+        <activity android:name=".test.TestFFmpegActivity" />
+        <activity android:name=".test.TestDaemonServiceActivity" />
+        <activity android:name=".test.TestAOPActivity" />
+        <activity android:name=".test.TestBehaviorActivity" />
+        <activity android:name=".test.TestHookRegisteredActivity" />
+        <activity android:name=".test.TestRxjavaActivity" />
+        <activity android:name=".test.TestWebViewActivity" />
+        <activity android:name=".test.source.TestViewDrawActivity"></activity>
+        <activity android:name=".test.source.TestGlideSourceActivity">
+        </activity>
+        <activity android:name=".test.source.TestViewTouchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".test.TestDaemonServiceActivity" />
-        <activity android:name=".test.TestAOPActivity" />
-        <activity android:name=".test.TestBehaviorActivity" />
-        <activity android:name=".test.TestHookRegisteredActivity" />
-        <activity android:name=".test.TestRxjavaActivity">
-
-        </activity>
-        <activity android:name=".test.TestWebViewActivity">
-
         </activity>
     </application>
 

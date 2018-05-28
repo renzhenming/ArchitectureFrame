@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".test.source.TestViewDrawActivity">
+
+    <TextView
+        android:id="@+id/text"
+        android:text="测量我的高度"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+    <Button
+        android:layout_width="match_parent"
+        android:text="下一页"
+        android:onClick="next"
+        android:layout_height="wrap_content" />
+</LinearLayout>
