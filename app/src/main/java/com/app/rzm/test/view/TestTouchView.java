@@ -24,12 +24,12 @@ public class TestTouchView extends View {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         LogUtils.d("View","dispatchTouchEvent:"+event.getAction());
-        return false;
+        return super.dispatchTouchEvent(event);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         LogUtils.d("View","onTouchEvent:"+event.getAction());
-        return false;
+        return super.onTouchEvent(event);
     }
 }

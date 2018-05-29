@@ -24,18 +24,18 @@ public class TestTouchViewGroup extends FrameLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         LogUtils.d("ViewGroup","dispatchTouchEvent:"+event.getAction());
-        return false;
+        return super.dispatchTouchEvent(event);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         LogUtils.d("ViewGroup","onInterceptTouchEvent:"+event.getAction());
-        return false;
+        return super.onInterceptTouchEvent(event);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         LogUtils.d("ViewGroup","onTouchEvent:"+event.getAction());
-        return false;
+        return super.onTouchEvent(event);
     }
 }
