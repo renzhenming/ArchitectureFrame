@@ -77,10 +77,11 @@
         <activity android:name=".test.TestHookRegisteredActivity" />
         <activity android:name=".test.TestRxjavaActivity" />
         <activity android:name=".test.TestWebViewActivity" />
-        <activity android:name=".test.source.TestViewDrawActivity"></activity>
-        <activity android:name=".test.source.TestGlideSourceActivity">
-        </activity>
+        <activity android:name=".test.source.TestViewDrawActivity" />
+        <activity android:name=".test.source.TestGlideSourceActivity"></activity>
         <activity android:name=".test.source.TestViewTouchActivity">
+        </activity>
+        <activity android:name=".test.TestParamsEncryptActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

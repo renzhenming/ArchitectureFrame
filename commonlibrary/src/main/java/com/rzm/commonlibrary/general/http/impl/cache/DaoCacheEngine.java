@@ -5,8 +5,8 @@ import android.content.Context;
 import com.rzm.commonlibrary.general.db.DaoSupportFactory;
 import com.rzm.commonlibrary.general.db.IDaoSupport;
 import com.rzm.commonlibrary.general.http.base.CacheData;
-import com.rzm.commonlibrary.utils.EncryptUtil;
 import com.rzm.commonlibrary.general.http.base.IHttpCache;
+import com.rzm.commonlibrary.utils.Md5Util;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class DaoCacheEngine implements IHttpCache {
         String cacheJson = null;
         IDaoSupport<CacheData> daoSupport = DaoSupportFactory.getFactory(context).getDao(CacheData.class);
         //以url作为参数，为了防止url中特殊字符无法被识别，所以需要进行md5加密
-        List<CacheData> cacheList = daoSupport.querySupport().selection(CacheData.KEY).selectionArgs(EncryptUtil.toMD5(key)).query();
+        List<CacheData> cacheList = daoSupport.querySupport().selection(CacheData.KEY).selectionArgs(Md5Util.toMD5(key)).query();
         if (cacheList.size() != 0) {
             CacheData cacheData = cacheList.get(0);
             cacheJson = cacheData.getmResultJson();
@@ -45,8 +45,8 @@ public class DaoCacheEngine implements IHttpCache {
     public boolean setCache(Context context,String key, String value) {
         //删掉原有的缓存
         IDaoSupport<CacheData> daoSupport = DaoSupportFactory.getFactory(context).getDao(CacheData.class);
-        daoSupport.delete(CacheData.KEY, EncryptUtil.toMD5(key));
-        long insert = daoSupport.insert(new CacheData(EncryptUtil.toMD5(key), value));
+        daoSupport.delete(CacheData.KEY, Md5Util.toMD5(key));
+        long insert = daoSupport.insert(new CacheData(Md5Util.toMD5(key), value));
         return insert > 0;
     }
 
@@ -58,7 +58,7 @@ public class DaoCacheEngine implements IHttpCache {
     @Override
     public boolean deleteCache(Context context,String key) {
         IDaoSupport<CacheData> daoSupport = DaoSupportFactory.getFactory(context).getDao(CacheData.class);
-        int delete = daoSupport.delete(CacheData.KEY, EncryptUtil.toMD5(key));
+        int delete = daoSupport.delete(CacheData.KEY, Md5Util.toMD5(key));
         return delete > 0;
     }
 

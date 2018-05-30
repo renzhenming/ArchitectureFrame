@@ -3,7 +3,8 @@ package com.rzm.commonlibrary.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class EncryptUtil {
+public class Md5Util {
+
     public static String toMD5(String sbs) {
         MessageDigest digest;
         try {

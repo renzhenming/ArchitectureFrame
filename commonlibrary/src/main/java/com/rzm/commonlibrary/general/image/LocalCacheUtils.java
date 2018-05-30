@@ -3,7 +3,7 @@ package com.rzm.commonlibrary.general.image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import com.rzm.commonlibrary.utils.EncryptUtil;
+import com.rzm.commonlibrary.utils.Md5Util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,7 +25,7 @@ public class LocalCacheUtils {
         }
 
         //把图片缓存在缓存目录
-        File file = new File(dir, EncryptUtil.toMD5(url));
+        File file = new File(dir, Md5Util.toMD5(url));
         FileOutputStream stream = null;
         try {
             stream = new FileOutputStream(file);
@@ -41,7 +41,7 @@ public class LocalCacheUtils {
         if(!dir.exists()){
            return null;
         }
-        File file = new File(dir,EncryptUtil.toMD5(url));
+        File file = new File(dir, Md5Util.toMD5(url));
         if(!file.exists()){
             return null;
         }
