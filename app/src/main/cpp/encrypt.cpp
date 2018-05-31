@@ -8,6 +8,7 @@ using namespace std;
 #define LOGI(FORMAT,...) __android_log_print(ANDROID_LOG_INFO,"renzhenming",FORMAT,##__VA_ARGS__);
 #define LOGE(FORMAT,...) __android_log_print(ANDROID_LOG_ERROR,"renzhenming",FORMAT,##__VA_ARGS__);
 #define MD5_KEY "renzhenming"
+#define PACKAGE_NAME "com.app.rzm"
 
 /**
  * 加密解密的过程：
@@ -72,7 +73,25 @@ JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptForAndroid
 }
 
 jboolean checkApp(JNIEnv *env, jobject context) {
-    //获取PackageManager
     jclass context_class = env->GetObjectClass(context);
+
+
+    //获取应用包名 通过Context的getPackageName方法获取
+
+    jmethodID getPackageName_method_id = env->GetMethodID(context_class,"getPackageName","()Ljava/lang/String;");
+    jstring package_name = (jstring) env->CallObjectMethod(context, getPackageName_method_id);
+    const char *c_package_name = env->GetStringUTFChars(package_name,NULL);
+    if (strcmp(c_package_name,PACKAGE_NAME) != 0){
+        LOGI("package name not right");
+        return -1;
+    }else{
+        LOGI("package name check right");
+    }
+    //获取PackageManager
+
+
+    //获取方法签名  javap -s -p java.util.Date
+    jmethodID g_method_id = env->GetMethodID(context_class,"getPackageManager","()Landroid/content/pm/PackageManager");
+    jobject p_manager = env->CallObjectMethod(context,g_method_id);
     return true;
 }
