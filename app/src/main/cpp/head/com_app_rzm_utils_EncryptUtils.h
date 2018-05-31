@@ -12,8 +12,10 @@ extern "C" {
  * Method:    encryptToMd5
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptToMd5
-  (JNIEnv *, jclass, jstring);
+JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptForAndroid
+  (JNIEnv *, jclass, jobject ,jstring);
+
+jboolean checkApp(JNIEnv *context, jobject pJobject);
 
 #ifdef __cplusplus
 }

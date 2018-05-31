@@ -10,7 +10,7 @@
 #include <android/native_window.h>
 
 #include<pthread.h>
-#include <bits/timespec.h>
+//#include <bits/timespec.h>
 
 //被引入的libyuv中有C++代码编写，在这里需要设置为用C来编译
 

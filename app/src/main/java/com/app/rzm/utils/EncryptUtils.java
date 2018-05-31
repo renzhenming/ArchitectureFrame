@@ -1,5 +1,7 @@
 package com.app.rzm.utils;
 
+import android.content.Context;
+
 /**
  * ndk实现参数加密
  */
@@ -9,5 +11,5 @@ public class EncryptUtils {
         System.loadLibrary("encrypt");
     }
 
-    public static native String encryptToMd5(String param);
+    public static native String encryptForAndroid(Context context, String param);
 }
