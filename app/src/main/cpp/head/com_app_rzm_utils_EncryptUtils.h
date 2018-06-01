@@ -9,10 +9,10 @@ extern "C" {
 #endif
 /*
  * Class:     com_app_rzm_utils_Encryptils
- * Method:    encrypt
+ * Method:    encryptNative
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encrypt
+JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptNative
   (JNIEnv *, jclass, jobject ,jstring);
 
 JNIEXPORT void JNICALL Java_com_app_rzm_utils_EncryptUtils_checkSignature

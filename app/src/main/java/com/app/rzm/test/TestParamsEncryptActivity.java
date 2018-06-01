@@ -22,6 +22,15 @@ public class TestParamsEncryptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_params_encrypt);
         mText = (TextView) findViewById(R.id.text);
 
+        //拿到签名
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+            Signature[] signatures = packageInfo.signatures;
+            LogUtils.d("signature:"+signatures[0].toCharsString());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         //参数的加密，应该是在运行时架构HttpUtils
         //对参数字典排序HashMap
         //生成加密链接username=renzhenming&password=123456
@@ -31,14 +40,7 @@ public class TestParamsEncryptActivity extends AppCompatActivity {
         mText.setText(params);
 
 
-        //拿到签名
-        try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            Signature[] signatures = packageInfo.signatures;
-            LogUtils.d("signature:"+signatures[0].toCharsString());
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+
     }
 }
 

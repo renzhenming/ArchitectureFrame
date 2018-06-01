@@ -11,17 +11,22 @@ public class EncryptUtils {
         System.loadLibrary("encrypt");
     }
 
+    public static String encrypt(Context context, String param){
+        checkSignature(context);
+        return encryptNative(context,param);
+    }
+
     /**
      * 对一个字符串进行加密
      * @param context
      * @param param
      * @return
      */
-    public static native String encrypt(Context context, String param);
+    private static native String encryptNative(Context context, String param);
 
-    /*
+    /**
      * 校验app签名
      * @param context
      */
-    public static native void checkSignature(Context context);
+    private static native void checkSignature(Context context);
 }
