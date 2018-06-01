@@ -31,15 +31,12 @@ public class TestParamsEncryptActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //参数的加密，应该是在运行时架构HttpUtils
-        //对参数字典排序HashMap
-        //生成加密链接username=renzhenming&password=123456
+        //将网络请求中的http参数拼接成这样的字符串username=renzhenming&password=123456
+        //然后将这个参数字符串进行加密
         String params = EncryptUtils.encrypt(this,"username=renzhenming&password=123456");
 
         //作为参数给到服务器，服务器也生成同样的密文，然后将加密的字符串进行比较
         mText.setText(params);
-
-
 
     }
 }

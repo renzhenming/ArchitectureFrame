@@ -64,7 +64,6 @@ add_library( encrypt
 
 # 将预构建库与本地库相连
 target_link_libraries( encrypt
-                       ${jnigraphics-lib}
                        ${log-lib} )
 
 #####################################图片压缩############################################
