@@ -9,13 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_app_rzm_utils_Encryptils
- * Method:    encryptToMd5
+ * Method:    encrypt
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptForAndroid
+JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encrypt
   (JNIEnv *, jclass, jobject ,jstring);
 
-jboolean checkApp(JNIEnv *context, jobject pJobject);
+JNIEXPORT void JNICALL Java_com_app_rzm_utils_EncryptUtils_checkSignature
+  (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
 }

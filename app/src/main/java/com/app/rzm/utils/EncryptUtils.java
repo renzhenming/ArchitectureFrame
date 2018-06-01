@@ -11,5 +11,17 @@ public class EncryptUtils {
         System.loadLibrary("encrypt");
     }
 
-    public static native String encryptForAndroid(Context context, String param);
+    /**
+     * 对一个字符串进行加密
+     * @param context
+     * @param param
+     * @return
+     */
+    public static native String encrypt(Context context, String param);
+
+    /*
+     * 校验app签名
+     * @param context
+     */
+    public static native void checkSignature(Context context);
 }

@@ -10,6 +10,14 @@ using namespace std;
 #define MD5_KEY "renzhenming"
 #define PACKAGE_NAME "com.app.rzm"
 
+//签名校验是否通过，否返回-1
+static int signature_verify = -1;
+
+//app包名
+static char* PACKAGE_NAME = "com.app.rzm";
+
+//app签名
+static char* APP_SIGNATURE = "308201dd30820146020101300d06092a864886f70d010105050030373116301406035504030c0d416e64726f69642044656275673110300e060355040a0c07416e64726f6964310b3009060355040613025553301e170d3137303730343233303635325a170d3437303632373233303635325a30373116301406035504030c0d416e64726f69642044656275673110300e060355040a0c07416e64726f6964310b300906035504061302555330819f300d06092a864886f70d010101050003818d0030818902818100968919d3d2fb955735c0be2e59b068dd5ebf784c9c5c7d1375dcaf392011d3b1ff4629dc85f03ffa6b2051faf65eff9f68cd147d46721a11a386abde4c534b75e7c12a9cf51398d0413843cfd1b89e61d02b7f5ee068be72e74448c980314508fe4078d676efd71e1a3879da9e403f56797988c52a76965e0e929b25d2c616310203010001300d06092a864886f70d0101050500038181006ba292fc04a49c8a004a5d6e72c4af9afb3d4542a1d66d9b10fe2ba2902f7b4b00db61c50ce0d4a0dcfa5dc6c62b8393cd08b86372c8559c62bb7bbbad1fea572a75c8fe00f8bfaab9ee92f0a7363a229b849f9051e9567c1d50d5b4ba59c169afd8ff9eca32f3f2e97e501780a12e28b7113ae991cdc46cea8e60104637feac";
 /**
  * 加密解密的过程：
  * 客户端通过定义的规则将参数加密后，将密文和铭文参数同时传递到服务器
@@ -36,10 +44,10 @@ using namespace std;
  * @param jparam
  * @return
  */
-JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptForAndroid
+JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encrypt
   (JNIEnv *env, jclass jclazz,jobject context,jstring jparam){
 
-    if(!checkApp(env, context)){
+    if(signature_verify == -1){
         return env->NewStringUTF("signature check err");
     }
 
@@ -71,27 +79,55 @@ JNIEXPORT jstring JNICALL Java_com_app_rzm_utils_EncryptUtils_encryptForAndroid
 
     return env->NewStringUTF(szMd5);
 }
+JNIEXPORT void JNICALL Java_com_app_rzm_utils_EncryptUtils_checkSignature
+  (JNIEnv *env, jclass jclazz, jobject context){
+  //1.获取包名  通过Context的getPackageName方法获取
 
-jboolean checkApp(JNIEnv *env, jobject context) {
-    jclass context_class = env->GetObjectClass(context);
+  //获取Context对象的class
+  jclass context_class = env->GetObjectClass(context);
+  //获取getPackageName的方法id
+  jmethodID context_method_id = env->GetMethodID(context_class,"getPackageName","()Ljava/lang/String;")
+  //调用getPackageName方法
+  jstring package_name = (jstring)env->CallObjectMethod(context,context_method_id);
+  //转换为char*
+  const char *c_package_name = (char *)env->GetStringUTFChars(package_name,NULL);
 
+  //2.对比包名
 
-    //获取应用包名 通过Context的getPackageName方法获取
+  if(strcmp(c_package_name,PACKAGE_NAME)){
+      return env->NewStringUTF("package name check err");
+  }
 
-    jmethodID getPackageName_method_id = env->GetMethodID(context_class,"getPackageName","()Ljava/lang/String;");
-    jstring package_name = (jstring) env->CallObjectMethod(context, getPackageName_method_id);
-    const char *c_package_name = env->GetStringUTFChars(package_name,NULL);
-    if (strcmp(c_package_name,PACKAGE_NAME) != 0){
-        LOGI("package name not right");
-        return -1;
-    }else{
-        LOGI("package name check right");
-    }
-    //获取PackageManager
+  //3.获取签名（通过下边这种方式）
+  //PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+  //Signature[] signatures = packageInfo.signatures;
+  //LogUtils.d("signature:"+signatures[0].toCharsString());
 
-
-    //获取方法签名  javap -s -p java.util.Date
-    jmethodID g_method_id = env->GetMethodID(context_class,"getPackageManager","()Landroid/content/pm/PackageManager");
-    jobject p_manager = env->CallObjectMethod(context,g_method_id);
-    return true;
+  //获取Context中的getPackageManager方法id
+  jmethodID get_package_manager_method_id = env->GetMethodID(context_class,"getPackageManager","()Landroid/content/pm/PackageManager;");
+  //从Context中通过调用getPackageManager获取PackageManager对象
+  jobject package_manager = env->CallObjectMethod(context,get_package_manager_method_id);
+  //对比签名
+//  jclass context_class = env->GetObjectClass(context);
+//
+//
+//  //获取应用包名 通过Context的getPackageName方法获取
+//
+//  jmethodID getPackageName_method_id = env->GetMethodID(context_class,"getPackageName","()Ljava/lang/String;");
+//  jstring package_name = (jstring) env->CallObjectMethod(context, getPackageName_method_id);
+//  const char *c_package_name = env->GetStringUTFChars(package_name,NULL);
+//  if (strcmp(c_package_name,PACKAGE_NAME) != 0){
+//      LOGI("package name not right");
+//      return -1;
+//  }else{
+//      LOGI("package name check right");
+//  }
+//  //获取PackageManager
+//
+//
+//  //获取方法签名  javap -s -p java.util.Date
+//  jmethodID g_method_id = env->GetMethodID(context_class,"getPackageManager","()Landroid/content/pm/PackageManager");
+//  jobject p_manager = env->CallObjectMethod(context,g_method_id);
+//  return true;
 }
+
