@@ -6,12 +6,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.alipay.euler.andfix.patch.PatchManager;
 import com.app.rzm.R;
 import com.rzm.commonlibrary.general.fix.FixDexManager;
+import com.rzm.commonlibrary.utils.AppUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public class TestFixDexActivity extends AppCompatActivity {
+
+    private PatchManager mPatchManger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +24,12 @@ public class TestFixDexActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_fix_dex);
     }
 
-    private void fixDex() {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.dex");
+    public void bump(View view) {
+        int a = 2/0;
+    }
+
+    public void fixBump(View view) {
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
         if (file.exists()){
             FixDexManager manager = new FixDexManager(this);
             try {
@@ -33,11 +42,23 @@ public class TestFixDexActivity extends AppCompatActivity {
         }
     }
 
-    public void bump(View view) {
-        int a = 2/0;
-    }
+    public void AndFix(View view) {
+        //初始化阿里热修复
+        mPatchManger = new PatchManager(this);
+        //获取当前应用版本
+        mPatchManger.init(AppUtils.getVersionName(this));
+        mPatchManger.loadPatch();
 
-    public void fixBump(View view) {
-        fixDex();
+        //获取下载到的patch包
+        File patchFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
+        if (patchFile != null){
+            try {
+                mPatchManger.addPatch(patchFile.getAbsolutePath());
+                Toast.makeText(this,"AndFix修复成功",Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this,"AndFix修复失败",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

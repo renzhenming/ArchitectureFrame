@@ -38,7 +38,6 @@ public class BaseApplication extends Application {
 
         this.mContext = this;
         //initExceptionHandler();
-        //initAlibabaHotFix();
         //initMyHotFix();
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
@@ -100,28 +99,6 @@ public class BaseApplication extends Application {
             e.printStackTrace();
         }
 
-    }
-
-    private void initAlibabaHotFix() {
-        //初始化阿里热修复
-        mPatchManger = new PatchManager(this);
-        //获取当前应用版本
-        mPatchManger.init(AppUtils.getVersionName(this));
-        mPatchManger.loadPatch();
-
-        //以下代码可以写在项目的application中
-
-        //获取下载到的patch包
-        File patchFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
-        if (patchFile != null){
-            try {
-                mPatchManger.addPatch(patchFile.getAbsolutePath());
-                Toast.makeText(this,"修复成功",Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(this,"修复失败",Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void initExceptionHandler() {

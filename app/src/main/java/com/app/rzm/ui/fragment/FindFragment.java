@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import com.bumptech.glide.Glide;
 import com.rzm.commonlibrary.general.http.impl.callback.CallBackImpl;
-import com.rzm.commonlibrary.general.http.impl.engine.okhttp.OkHttpEngine;
 import com.rzm.commonlibrary.views.banner.BannerAdapter;
 import com.rzm.commonlibrary.views.banner.BannerView;
 import com.rzm.commonlibrary.views.banner.BannerViewPager;

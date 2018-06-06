@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.app.rzm.R;
+import com.bumptech.glide.Glide;
 import com.rzm.commonlibrary.utils.TimeFormatUtil;
 
 import java.io.File;

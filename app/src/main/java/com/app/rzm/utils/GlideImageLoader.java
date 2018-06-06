@@ -3,8 +3,8 @@ package com.app.rzm.utils;
 import android.content.Context;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.app.rzm.R;
+import com.bumptech.glide.Glide;
 import com.rzm.commonlibrary.views.recyclerview.holder.CommonViewHolder;
 
 /**

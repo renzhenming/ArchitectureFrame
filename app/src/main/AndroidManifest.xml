@@ -64,7 +64,13 @@
         <activity android:name=".test.TestHttpUtilsActivity" />
         <activity android:name=".test.TestSlidingViewActivity" />
         <activity android:name=".test.TestIOCViewBindActivity" />
-        <activity android:name=".test.TestFixDexActivity" />
+        <activity android:name=".test.TestFixDexActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".test.TestCommonNavigationBarActivity" />
         <activity android:name=".test.TestPermissionHelperActivity" />
         <activity android:name=".test.TestCommonDialogActivity" />
@@ -82,11 +88,7 @@
         <activity android:name=".test.source.TestViewTouchActivity">
         </activity>
         <activity android:name=".test.TestParamsEncryptActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

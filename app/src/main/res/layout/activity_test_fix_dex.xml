@@ -18,8 +18,14 @@
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:text="点我修复崩溃"
+        android:text="native修复"
         android:onClick="fixBump"
         android:layout_height="wrap_content" />
-
+    <Button
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="AndFix修复"
+        android:onClick="AndFix"
+        android:layout_height="wrap_content" />
 </LinearLayout>

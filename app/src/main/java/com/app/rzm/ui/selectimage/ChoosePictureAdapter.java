@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.app.rzm.R;
+import com.bumptech.glide.Glide;
 import com.rzm.commonlibrary.views.recyclerview.adpter.CommonRecyclerAdpater;
 
 import java.util.ArrayList;

@@ -35,6 +35,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
+
 public class TestRxjavaActivity extends AppCompatActivity {
 
     private static final java.lang.String TAG = "TestRxjavaActivity";
