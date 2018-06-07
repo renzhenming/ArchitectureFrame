@@ -37,8 +37,9 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         this.mContext = this;
-        //initExceptionHandler();
+        initExceptionHandler();
         //initMyHotFix();
+        initAliFix();
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle bundle) {
@@ -75,6 +76,10 @@ public class BaseApplication extends Application {
 
             }
         });
+
+    }
+
+    private void initAliFix() {
 
     }
 

@@ -10,6 +10,7 @@ import com.alipay.euler.andfix.patch.PatchManager;
 import com.app.rzm.R;
 import com.rzm.commonlibrary.general.fix.FixDexManager;
 import com.rzm.commonlibrary.utils.AppUtils;
+import com.rzm.commonlibrary.utils.ToastUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,8 @@ public class TestFixDexActivity extends AppCompatActivity {
     }
 
     public void bump(View view) {
-        int a = 2/0;
+        int a = 2/1;
+        ToastUtil.showCustomToast(getApplicationContext(),"a="+a);
     }
 
     public void fixBump(View view) {
@@ -48,7 +50,6 @@ public class TestFixDexActivity extends AppCompatActivity {
         //获取当前应用版本
         mPatchManger.init(AppUtils.getVersionName(this));
         mPatchManger.loadPatch();
-
         //获取下载到的patch包
         File patchFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
         if (patchFile != null){
