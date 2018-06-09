@@ -31,13 +31,15 @@ import dalvik.system.BaseDexClassLoader;
 
 public class FixDexManager {
     private static final String TAG = "FixDexManager2";
+    private static final String PATCH = ".apatch";
+    private static final String DEX_PATH = "odex";
     private final Context mContext;
     private final File mDexDir;
 
     public FixDexManager(Context context) {
         this.mContext = context;
         //获取系统能够访问的dex目录
-        this.mDexDir = context.getDir("odex",Context.MODE_PRIVATE);
+        this.mDexDir = context.getDir(DEX_PATH,Context.MODE_PRIVATE);
     }
 
     public void fixDex(String fixDexPath) throws Exception {
@@ -96,6 +98,7 @@ public class FixDexManager {
 
     /**
      * 从classloader中获取dexElements
+     * 这个方法将会得到当前apk中的dexElements数组
      * @param classLoader
      * @return
      */
@@ -119,7 +122,7 @@ public class FixDexManager {
         File[] dexFiles = mDexDir.listFiles();
         List<File> fixDexFiles = new ArrayList<>();
         for (File dexFile : dexFiles) {
-            if (dexFile.getName().endsWith(".dex")){
+            if (dexFile.getName().endsWith(PATCH)){
                 fixDexFiles.add(dexFile);
             }
         }
@@ -136,7 +139,7 @@ public class FixDexManager {
         //Element数组对象
         Object applicationDexElements = getDexElementByClassLoader(applicationClassLoader);
 
-        File optimizedDirectory = new File(mDexDir,"odex");
+        File optimizedDirectory = new File(mDexDir,DEX_PATH);
         if (!optimizedDirectory.exists()){
             optimizedDirectory.mkdirs();
         }

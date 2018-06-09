@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.alipay.euler.andfix.patch.PatchManager;
+
 import com.app.rzm.R;
 import com.rzm.commonlibrary.general.fix.FixDexManager;
 import com.rzm.commonlibrary.utils.AppUtils;
@@ -26,7 +27,7 @@ public class TestFixDexActivity extends AppCompatActivity {
     }
 
     public void bump(View view) {
-        int a = 2/1;
+        int a = 2/0;
         ToastUtil.showCustomToast(getApplicationContext(),"a="+a);
     }
 
@@ -35,6 +36,7 @@ public class TestFixDexActivity extends AppCompatActivity {
         if (file.exists()){
             FixDexManager manager = new FixDexManager(this);
             try {
+
                 manager.fixDex(file.getAbsolutePath());
                 Toast.makeText(getApplicationContext(),"修复bug成功",Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
