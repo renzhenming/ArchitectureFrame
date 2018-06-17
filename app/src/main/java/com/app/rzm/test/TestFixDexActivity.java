@@ -32,18 +32,7 @@ public class TestFixDexActivity extends AppCompatActivity {
     }
 
     public void fixBump(View view) {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
-        if (file.exists()){
-            FixDexManager manager = new FixDexManager(this);
-            try {
 
-                manager.fixDex(file.getAbsolutePath());
-                Toast.makeText(getApplicationContext(),"修复bug成功",Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(),"修复bug失败",Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        }
     }
 
     public void AndFix(View view) {

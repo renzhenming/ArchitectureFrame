@@ -71,10 +71,12 @@ public class ChoosePictureActivity extends BaseSkinActivity implements ChoosePic
     private TextView mSelectNumTv;
     private TextView mSelectPreview;
     private TextView mSelectFinish;
+    private boolean isNet;
 
 
     @Override
     protected void initView() {
+        isNet = getIntent().getBooleanExtra("isNet", false);
         mImageListRv = (RecyclerView) findViewById(R.id.image_list_rv);
         mSelectNumTv = (TextView) findViewById(R.id.select_num);
         mSelectPreview = (TextView) findViewById(R.id.select_preview);
@@ -152,6 +154,9 @@ public class ChoosePictureActivity extends BaseSkinActivity implements ChoosePic
                 while (data.moveToNext()) {
                     // 只保存路径
                     String path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
+                    if (!isNet){
+                        path="file://"+path;
+                    }
                     images.add(path);
                 }
 
@@ -172,7 +177,16 @@ public class ChoosePictureActivity extends BaseSkinActivity implements ChoosePic
      * @param images
      */
     private void showImageList(ArrayList<String> images) {
-        ChoosePictureAdapter listAdapter = new ChoosePictureAdapter(this, images, mResultList, mMaxCount);
+
+        //********************** 为测试SimpleImageLoader 而添加**************************/
+
+        if (isNet){
+            images.clear();
+            images = list;
+        }
+        //********************** 为测试SimpleImageLoader 而添加**************************/
+
+        ChoosePictureAdapter listAdapter = new ChoosePictureAdapter(this,isNet, images, mResultList, mMaxCount);
         listAdapter.setOnSelectImageListener(this);
         mImageListRv.setLayoutManager(new GridLayoutManager(this, 4));
         mImageListRv.setAdapter(listAdapter);
@@ -317,5 +331,137 @@ public class ChoosePictureActivity extends BaseSkinActivity implements ChoosePic
             }
         }
         return pictureDir;
+    }
+
+    static ArrayList<String> list;
+    static {
+        list = new ArrayList<>();
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=107326415,2118082933&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1200206113,4082080431&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=987821395,1746525530&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2801725831,779566062&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=299251904,339269052&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=119555925,359402879&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4274862885,407108311&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2068460448,1235456568&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2981691059,2807991775&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=4049631191,1841084994&fm=27&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3342229742,3924804424&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1785381590,109248274&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3291561210,2380210579&fm=200&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2457852357,325132148&fm=27&gp=0.jpg");
+        list.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2336646649,1073348978&fm=200&gp=0.jpg");
+        list.add("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3896712526,2288039174&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3339494541,3469840367&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2554447539,1121840194&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=4152225030,3325684971&fm=27&gp=0.jpg");
+        list.add("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=306799378,4157169643&fm=27&gp=0.jpg");
+        list.add("https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1737623313,1929793269&fm=27&gp=0.jpg");
+
     }
 }

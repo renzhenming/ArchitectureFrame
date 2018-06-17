@@ -7,6 +7,10 @@ import com.rzm.commonlibrary.general.global.BaseApplication;
 import com.rzm.commonlibrary.general.http.base.HttpUtils;
 import com.rzm.commonlibrary.general.http.impl.cache.SPCacheEngine;
 import com.rzm.commonlibrary.general.http.impl.engine.okhttp.OkHttpEngine;
+import com.rzm.commonlibrary.general.imageloader.cache.MemoryDiskCache;
+import com.rzm.commonlibrary.general.imageloader.config.ImageLoaderConfig;
+import com.rzm.commonlibrary.general.imageloader.loader.SimpleImageLoader;
+import com.rzm.commonlibrary.general.imageloader.policy.SerialPolicy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +29,7 @@ public class MyApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         context = this;
-
+        initImageLoader();
         initNet();
 
 
@@ -61,5 +65,22 @@ public class MyApplication extends BaseApplication {
 
     public static MyApplication getContext(){
         return context;
+    }
+
+
+
+
+    private void initImageLoader() {
+        //配置
+        ImageLoaderConfig.Builder build = new ImageLoaderConfig.Builder();
+        build.setDispatcherCount(3) //线程数量
+                .setLoadPolicy(new SerialPolicy()) //加载策略
+                .setCachePolicy(new MemoryDiskCache(this)) //缓存策略
+                .setLoadingImage(R.drawable.loading)
+                .setErrorImage(R.drawable.loading_failure);
+
+        ImageLoaderConfig config = build.build();
+        //初始化
+        SimpleImageLoader.init(config);
     }
 }

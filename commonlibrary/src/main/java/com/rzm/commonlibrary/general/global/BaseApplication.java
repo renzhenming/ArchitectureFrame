@@ -38,7 +38,7 @@ public class BaseApplication extends Application {
 
         this.mContext = this;
         initExceptionHandler();
-        //initMyHotFix();
+        initMyHotFix();
         initAliFix();
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
@@ -90,7 +90,7 @@ public class BaseApplication extends Application {
         try {
             manager.loadFixDex();
 
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.dex");
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"fix.apatch");
             if (file.exists()){
                 try {
                     manager.fixDex(file.getAbsolutePath());

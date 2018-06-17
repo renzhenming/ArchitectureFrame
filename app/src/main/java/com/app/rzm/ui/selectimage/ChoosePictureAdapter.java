@@ -8,19 +8,22 @@ import android.widget.Toast;
 
 import com.app.rzm.R;
 import com.bumptech.glide.Glide;
+import com.rzm.commonlibrary.general.imageloader.loader.SimpleImageLoader;
 import com.rzm.commonlibrary.views.recyclerview.adpter.CommonRecyclerAdpater;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChoosePictureAdapter extends CommonRecyclerAdpater<String> {
+    private boolean isFromSimpleImageLoader;
     // 选择图片的集合
     private ArrayList<String> mResultImageList;
     private int mMaxCount;
-    public ChoosePictureAdapter(Context context, List<String> data, ArrayList<String> imageList, int maxCount) {
+    public ChoosePictureAdapter(Context context, boolean isNet, List<String> data, ArrayList<String> imageList, int maxCount) {
         super(context, data, R.layout.media_chooser_item);
         this.mResultImageList = imageList;
         this.mMaxCount = maxCount;
+        this.isFromSimpleImageLoader = isNet;
     }
 
 
@@ -48,8 +51,13 @@ public class ChoosePictureAdapter extends CommonRecyclerAdpater<String> {
 
             // 显示图片利用Glide
             ImageView imageView = holder.getView(R.id.image);
-            Glide.with(mContext).load(item)
-                    .centerCrop().into(imageView);
+            SimpleImageLoader.getInstance().display(imageView,item);
+            /*if (isFromSimpleImageLoader){
+                SimpleImageLoader.getInstance().display(imageView,item);
+            }else{
+                Glide.with(mContext).load(item)
+                        .centerCrop().into(imageView);
+            }*/
 
             ImageView selectIndicatorIv = holder.getView(R.id.media_selected_indicator);
 
