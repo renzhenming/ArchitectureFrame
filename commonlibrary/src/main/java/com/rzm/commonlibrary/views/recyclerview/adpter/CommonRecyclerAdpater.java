@@ -104,7 +104,6 @@ public abstract class CommonRecyclerAdpater<R> extends RecyclerView.Adapter<Comm
         return mList == null ? 0 : mList.size();
     }
 
-
     public class ViewHolder extends CommonViewHolder {
 
         public ViewHolder(View itemView) {

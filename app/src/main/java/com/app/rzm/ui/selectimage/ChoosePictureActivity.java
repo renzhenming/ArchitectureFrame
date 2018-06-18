@@ -187,6 +187,7 @@ public class ChoosePictureActivity extends BaseSkinActivity implements ChoosePic
         //********************** 为测试SimpleImageLoader 而添加**************************/
 
         ChoosePictureAdapter listAdapter = new ChoosePictureAdapter(this,isNet, images, mResultList, mMaxCount);
+        listAdapter.setHasStableIds(true);
         listAdapter.setOnSelectImageListener(this);
         mImageListRv.setLayoutManager(new GridLayoutManager(this, 4));
         mImageListRv.setAdapter(listAdapter);

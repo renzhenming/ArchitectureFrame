@@ -22,7 +22,7 @@ public class TestSimpleImageLoaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_simple_image_loader);
         ImageView image = (ImageView) findViewById(R.id.imageview);
-        SimpleImageLoader.getInstance().display(image,"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3434597041,1190385826&fm=27&gp=0.jpg");
+        SimpleImageLoader.getInstance().display(image,"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=258542761,3549494028&fm=27&gp=0.jpg");
     }
 
     public void jump(View view) {

@@ -31,7 +31,6 @@ public abstract class AbstractLoader implements Loader {
      * 同样因为要处理显示时的逻辑，所以需要持有显示配置对象的引用
      */
     private DisplayConfig displayConfig = SimpleImageLoader.getInstance().getConfig().getDisplayConfig();
-
     @Override
     public void load(BitmapRequest request) {
         //从缓存中获取Bitmap
@@ -46,6 +45,7 @@ public abstract class AbstractLoader implements Loader {
             //加载器实现，抽象
             bitmap = onLoad(request);
             if (bitmap == null){
+                //加载失败重试三次
                 while(integer.incrementAndGet() <=3){
                     bitmap = onLoad(request);
                     if (bitmap != null){
