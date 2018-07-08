@@ -1,0 +1,133 @@
+﻿<!-- 请保证该文档一定是 UTF-8编码 -->
+<updateXml>
+    <!--升级到V002需要创建的表结构-->
+    <createVersion version="V002">
+        <createDb name="user">
+            <sql_createTable>
+                create table if not exists User(
+                user_id Integer primary key,
+                name TEXT,
+                password TEXT,
+                lastLoginTime TEXT
+                );
+            </sql_createTable>
+            <sql_createTable>
+                create table if not exists Photo(
+                path TEXT,
+                time TEXT,
+                sendTime TEXT
+                );
+            </sql_createTable>
+        </createDb>
+    </createVersion>
+
+    <!--升级到V003需要创建的表结构-->
+    <createVersion version="V003">
+        <createDb name="user">
+            <sql_createTable>
+                create table if not exists User(
+                user_id Integer primary key,
+                name TEXT,
+                password TEXT,
+                lastLoginTime TEXT,
+                lastExistTime TEXT
+                );
+            </sql_createTable>
+
+            <sql_createTable>
+                create table if not exists Photo(
+                path TEXT,
+                time TEXT,
+                sendTime TEXT,
+                size TEXT
+                );
+            </sql_createTable>
+        </createDb>
+    </createVersion>
+
+    <!--从V001升级到V003-->
+    <updateStep
+        versionFrom="V001"
+        versionTo="V003">
+        <updateDb name="user">
+            <sql_before>alter table User rename to bak_User;</sql_before>
+            <sql_after>
+                insert into User(user_id,name, password)
+                select user_id,name,password
+                from bak_User;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_User;
+            </sql_after>
+        </updateDb>
+
+        <updateDb name="user">
+            <sql_before>alter table Photo rename to bak_Photo;</sql_before>
+            <sql_after>
+                insert into Photo(path,time)
+                select path,time
+                from bak_Photo;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_Photo;
+            </sql_after>
+        </updateDb>
+    </updateStep>
+    <!--从V001升级到V002-->
+    <updateStep
+        versionFrom="V001"
+        versionTo="V002">
+        <updateDb name="user">
+            <sql_before>alter table User rename to bak_User;</sql_before>
+            <sql_after>
+                insert into User(user_id,name, password)
+                select user_id,name,password
+                from bak_User;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_User;
+            </sql_after>
+        </updateDb>
+
+        <updateDb name="user">
+            <sql_before>alter table Photo rename to bak_Photo;</sql_before>
+            <sql_after>
+                insert into Photo(path,time)
+                select path,time
+                from bak_Photo;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_Photo;
+            </sql_after>
+        </updateDb>
+    </updateStep>
+    <!--从V002升级到V003-->
+    <updateStep
+        versionFrom="V002"
+        versionTo="V003">
+        <updateDb name="user">
+            <sql_before>alter table User rename to bak_User;</sql_before>
+            <sql_after>
+                insert into User(user_id,name, password,lastLoginTime)
+                select user_id,name, password,lastLoginTime
+                from bak_User;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_User;
+            </sql_after>
+        </updateDb>
+
+        <updateDb name="user">
+            <sql_before>alter table Photo rename to bak_Photo;</sql_before>
+            <sql_after>
+                insert into Photo(path,time,sendTime)
+                select path,time,sendTime
+                from bak_Photo;
+            </sql_after>
+            <sql_after>
+                drop table if exists bak_Photo;
+            </sql_after>
+        </updateDb>
+
+    </updateStep>
+</updateXml>

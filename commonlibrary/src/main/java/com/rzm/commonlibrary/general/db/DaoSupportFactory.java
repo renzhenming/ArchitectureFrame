@@ -19,8 +19,8 @@ import java.io.File;
 
 public class DaoSupportFactory {
 
-    private static final String DB_DIR = "nhdz";
-    private static final String DB_NAME = "nhdz.db";
+    private static final String DB_DIR = "update";
+    private static final String DB_NAME = "user.db";
     private static volatile DaoSupportFactory mFactory;
     private static SQLiteDatabase mSqliteDabase;
 
@@ -28,8 +28,8 @@ public class DaoSupportFactory {
     private DaoSupportFactory(Context context){
         //TODO 注意补充判断内存卡是否存在， 6.0 动态申请内存
         //把数据库放在内存卡
-        //File dbRoot = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+DB_DIR+File.separator+"database");
-        File dbRoot = new File(context.getFilesDir()+File.separator+DB_DIR+File.separator+"database");
+        File dbRoot = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+DB_DIR/*+File.separator+"database"*/);
+        //File dbRoot = new File(context.getFilesDir()+File.separator+DB_DIR+File.separator+"database");
 
         if (!dbRoot.exists()){
             dbRoot.mkdirs();

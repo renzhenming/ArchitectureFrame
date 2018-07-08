@@ -87,6 +87,9 @@
 
         </activity>
         <activity android:name=".test.TestSimpleImageLoaderActivity">
+
+        </activity>
+        <activity android:name=".test.TestDbUpgradeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
