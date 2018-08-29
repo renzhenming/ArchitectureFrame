@@ -102,16 +102,14 @@ dependencies {
     compile project(':commonlibrary')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //针对libs下的.jar库
-
-
     compile files('libs/aspectjrt.jar')
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:design:26.+'
     compile 'com.jakewharton:butterknife:8.8.1'
     testCompile 'junit:junit:4.12'
-
     //compile 'com.github.yangjie10930:EpMedia:v0.9.5'
+    implementation project(':ffmpeglibrary')
 }
 
 //////////--------------------AOP配置-------------------///////////////
