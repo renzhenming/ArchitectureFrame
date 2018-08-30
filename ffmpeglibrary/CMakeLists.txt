@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories(src/main/cpp/include/ffmpeg)
 include_directories(src/main/cpp/include/owner)
 
+#自己的库
 add_library(
     myffmpeg
     SHARED
@@ -52,3 +53,104 @@ set_target_properties(
     PROPERTIES IMPORTED_LOCATION
     ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libavfilter-5.so
 )
+
+#封装格式处理库
+add_library(
+    avformat
+    SHARED
+    IMPORTED
+)
+
+#指定格式库路径
+set_target_properties(
+    avformat
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libavformat-56.so
+)
+
+#工具库(大部分库都需要这个库的支持)
+add_library(
+    avutil
+    SHARED
+    IMPORTED
+)
+
+#指定工具库路径
+set_target_properties(
+    avutil
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libavutil-54.so
+)
+
+#后期处理
+add_library(
+    postproc
+    SHARED
+    IMPORTED
+)
+
+#指定后期处理库路径
+set_target_properties(
+    postproc
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libpostproc-53.so
+)
+
+#数据格式转换库
+add_library(
+    swresample
+    SHARED
+    IMPORTED
+)
+
+#指定库位置
+set_target_properties(
+    swresample
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libswresample-1.so
+)
+
+#视频像素数据格式转换
+add_library(
+    swscale
+    SHARED
+    IMPORTED
+)
+#视频像素格式转换库位置
+set_target_properties(
+    swscale
+    PROPERTIES IMPORTED_LOCATION
+    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libswscale-3.so
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

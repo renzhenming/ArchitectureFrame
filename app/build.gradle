@@ -56,12 +56,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+/*
 
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
         }
     }
+*/
 
     //********************** ndk-build 方式**********************//
 
@@ -94,6 +96,11 @@ android {
 
     //********************** CMake 方式**********************//
 
+    externalNativeBuild {
+        cmake {
+            path '../ffmpeglibrary/CMakeLists.txt'
+        }
+    }
 }
 
 dependencies {

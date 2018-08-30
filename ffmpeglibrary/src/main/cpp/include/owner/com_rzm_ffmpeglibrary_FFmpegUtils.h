@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_com_rzm_ffmpeglibrary_FFmpegUtils_decode
-  (JNIEnv *, jclass);
+  (JNIEnv *, jclass,jstring,jstring);
 
 #ifdef __cplusplus
 }

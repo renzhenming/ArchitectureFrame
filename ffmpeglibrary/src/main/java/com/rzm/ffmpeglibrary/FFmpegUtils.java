@@ -6,5 +6,5 @@ public class FFmpegUtils {
         System.loadLibrary("myffmpeg");
     }
 
-    public native static void decode();
+    public native static void decode(String input,String output);
 }

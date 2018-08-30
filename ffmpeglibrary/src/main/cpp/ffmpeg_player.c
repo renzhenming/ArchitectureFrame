@@ -1,4 +1,4 @@
-#include "com_rzm_ffmpeglibrary_FFmpegUtils.h"
+#include "include/owner/com_rzm_ffmpeglibrary_FFmpegUtils.h"
 
 /*
  * Class:     com_rzm_ffmpeglibrary_FFmpegUtils
@@ -6,7 +6,6 @@
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_com_rzm_ffmpeglibrary_FFmpegUtils_decode
-  (JNIEnv *env, jclass jclazz){
+(JNIEnv *env, jclass jclazz,jstring input,jstring output){
 
-
-  }
+}
