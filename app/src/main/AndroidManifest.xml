@@ -70,7 +70,13 @@
         <activity android:name=".test.TestCommonDialogActivity" />
         <activity android:name=".test.TestDaoSupportActivity" />
         <activity android:name=".test.TestSImmerBarActivity" />
-        <activity android:name=".test.TestFFmpegActivity" />
+        <activity android:name=".test.TestFFmpegActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".test.TestDaemonServiceActivity" />
         <activity android:name=".test.TestAOPActivity" />
         <activity android:name=".test.TestBehaviorActivity" />
@@ -85,11 +91,7 @@
         <activity android:name=".test.TestDbUpgradeActivity">
         </activity>
         <activity android:name=".test.TestSnapHelperActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

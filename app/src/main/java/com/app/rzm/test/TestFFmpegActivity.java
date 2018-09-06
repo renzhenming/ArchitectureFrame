@@ -21,19 +21,23 @@ public class TestFFmpegActivity extends AppCompatActivity {
 
     private VideoView videoView;
     private FFmpegUtils player;
+    private String input;
+    private String output;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_ffmpeg);
         videoView = (VideoView) findViewById(R.id.video_view);
-        player = new FFmpegUtils();
+        input = new File(Environment.getExternalStorageDirectory(),"input.mp4").getAbsolutePath();
+        output = new File(Environment.getExternalStorageDirectory(),"output.mp4").getAbsolutePath();
     }
 
     public void play(View view) {
-        String input = new File(Environment.getExternalStorageDirectory(),"input.mp4").getAbsolutePath();
+        player = new FFmpegUtils();
         Surface surface = videoView.getHolder().getSurface();
         player.play(input, surface);
+
     }
 
 

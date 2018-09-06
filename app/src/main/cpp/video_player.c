@@ -626,3 +626,52 @@ JNIEXPORT void JNICALL Java_com_app_rzm_utils_FFmpegUtils_play(
 
 }
 
+//解码
+JNIEXPORT void JNICALL Java_com_app_rzm_utils_FFmpegUtils_decode(
+		JNIEnv *env, jobject jobj, jstring input_jstr, jstring output_jstr){
+    const char *input_cstr = (*env)->GetStringUTFChars(env,input_jstr,NULL);
+    const char *output_cstr = (*env)->GetStringUTFChars(env,output_jstr,NULL);
+    //注册组件
+    av_register_all();
+
+    //创建上下文对象用于存储上下文信息
+    AVFormatContext *avFormatContext = avformat_alloc_context();
+
+    (*env)->ReleaseStringUTFChars(env,input_jstr,input_cstr);
+    (*env)->ReleaseStringUTFChars(env,output_jstr,output_cstr);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

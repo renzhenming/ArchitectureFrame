@@ -98,7 +98,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            path '../ffmpeglibrary/CMakeLists.txt'
+            path 'CMakeLists.txt'
         }
     }
 }
@@ -116,7 +116,6 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     testCompile 'junit:junit:4.12'
     //compile 'com.github.yangjie10930:EpMedia:v0.9.5'
-    implementation project(':ffmpeglibrary')
 }
 
 //////////--------------------AOP配置-------------------///////////////
