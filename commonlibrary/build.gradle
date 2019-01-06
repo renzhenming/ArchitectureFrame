@@ -5,18 +5,18 @@ apply plugin: 'com.android.library'
 group = 'com.github.mrwang'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 02
-        versionName "V003"
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
+        versionCode project.ext.versionCode
+        versionName project.ext.versionName
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled project.ext.minifyEnabled
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -24,20 +24,19 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:26.+'
+    implementation project.ext.supportAppcompat
 
-    implementation 'com.android.support:appcompat-v7:26.+'
-    implementation 'com.android.support:recyclerview-v7:26.+'
-    implementation 'com.android.support:design:26.+'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation project.ext.recyclerView
+    implementation project.ext.supportDesign
+    implementation project.ext.glide
     //okhttp
-    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation project.ext.okhttp
     //alibaba hot fix
-    implementation 'com.alipay.euler:andfix:0.5.0@aar'
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
-    implementation 'com.google.code.gson:gson:2.2.4'
+    implementation project.ext.andfix
+    implementation project.ext.retrofit
+    implementation project.ext.gson
     //可以定义返回类型为javabean
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation project.ext.convertGson
     //可以定义返回类型为string
     implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
     implementation 'com.squareup.retrofit2:retrofit-converters:2.1.0'

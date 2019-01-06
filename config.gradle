@@ -1,0 +1,42 @@
+project.ext {
+    javaVersion = 8
+    javaMaxHeapSize = '4G'
+    compileSdkVersion = 26
+    buildToolsVersion = '27.0.3'
+    minSdkVersion = 16
+    targetSdkVersion = 26
+    versionCode = 2
+    versionName = 'V003'
+
+    minifyEnabled = true
+    shrinkResEnable = minifyEnabled
+    sourceCompatibility = this.&getJavaVersion()
+    targetCompatibility = this.&getJavaVersion()
+
+    abiFilters = 'armeabi-v7a'
+
+    supportAppcompat = 'com.android.support:appcompat-v7:26.+'
+    supportV4 = 'com.android.support:support-v4:26.+'
+    supportDesign = 'com.android.support:design:26.+'
+    butterKnife = 'com.jakewharton:butterknife:8.8.1'
+    constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0'
+    recyclerView = 'com.android.support:recyclerview-v7:26.+'
+    glide = 'com.github.bumptech.glide:glide:3.7.0'
+    okhttp = 'com.squareup.okhttp3:okhttp:3.8.1'
+    andfix = 'com.alipay.euler:andfix:0.5.0@aar'
+    retrofit = 'com.squareup.retrofit2:retrofit:2.1.0'
+    gson = 'com.google.code.gson:gson:2.2.4'
+    convertGson = 'com.squareup.retrofit2:converter-gson:2.1.0'
+}
+def getJavaVersion(){
+    switch (project.ext.javaVersion){
+        case "6":
+            return JavaVersion.VERSION_1_6
+        case "7":
+            return JavaVersion.VERSION_1_7
+        case "8":
+            return JavaVersion.VERSION_1_8
+        default:
+            return JavaVersion.VERSION_1_7
+    }
+}
