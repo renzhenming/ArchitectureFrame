@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -166,7 +168,6 @@ public class WebViewActivity extends AppCompatActivity{
         LogUtils.e(TAG, "initSettings");
         if (mWebView == null) return;
         WebSettings webSetting = mWebView.getSettings();
-
         String userAgent = webSetting.getUserAgentString();
         LogUtils.e(TAG, "userAgent："+userAgent);
         webSetting.setUserAgentString(userAgent + " fkls_student");
@@ -176,7 +177,7 @@ public class WebViewActivity extends AppCompatActivity{
 
         //支持通过JS打开新窗口
         webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
-
+        webSetting.setJavaScriptEnabled(true);
         //设置支持H5的本地存储DomStorage
         webSetting.setDomStorageEnabled(true);
 
@@ -402,6 +403,118 @@ public class WebViewActivity extends AppCompatActivity{
         // For Android > 5.0
         public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> uploadMsg, WebChromeClient.FileChooserParams fileChooserParams) {
             openFileChooserImplForAndroid5(uploadMsg);
+            return true;
+        }
+
+        /**
+         * javascript 中的三种对话框，分别对应下边三个方法
+         * <script language="JavaScript">
+         *                 function alertFun()
+         *                 {
+         *                     alert("Alert警告对话框!");
+         *                 }
+         *                 function confirmFun()
+         *                 {
+         *                     if(confirm("访问百度?"))
+         *                     {location.href = "http://www.baidu.com";}
+         *                     else alert("取消访问!");
+         *                 }
+         *                 function promptFun()
+         *                 {
+         *                     var word = prompt("Prompt对话框","请输入点什么...:");
+         *                     if(word)
+         *                     {
+         *                         alert("你输入了:"+word)
+         *                     }else{alert("呵呵,你什么都没写!");}
+         *                 }
+         * </script>
+         * @param view
+         * @param url
+         * @param message
+         * @param result
+         * @return
+         */
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+            //创建一个Builder来显示网页中的对话框
+            new AlertDialog.Builder(WebViewActivity.this).setTitle("Alert对话框").setMessage(message + "AlertMessage")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.confirm();
+                        }
+                    }).setCancelable(false).show();
+            return true;
+        }
+
+        @Override
+        public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+            new AlertDialog.Builder(WebViewActivity.this).setTitle("Confirm对话框").setMessage(message + "ConfirmMessage")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.confirm();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.cancel();
+                        }
+                    }).setCancelable(false).show();
+            return true;
+        }
+
+        /**
+         * java和javascript相互调用
+         * 4.2及以上的系统上可以用下边这种方式
+         * javascriptMethodName是js中的方法名
+         * java调用javascript:webview.loadUrl("javascript:javascriptMethodName()");
+         * javascript调用java：webview.addJavaScriptInterface(new JavaObject(this),"javaObject");
+         * 然后再js中这样调用Java，onclick="javaObject.toast('哈哈')"，toast是JavaObject对象的方法，注意，这个方法要
+         * 加注解
+         * @JavascriptInterface
+         * public void toast(String value){
+         *     xxx;
+         * }
+         *
+         * 4.2以下不能使用这种方式，有安全隐患，这时候就需要通过js调用onJsPrompt方法传值，然后Java根据传值以反射方式调用
+         * 相关方法
+         * @param view
+         * @param url
+         * @param message
+         * @param defaultValue
+         * @param result
+         * @return
+         */
+        @Override
+        public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
+            //获得一个LayoutInflater对象factory,加载指定布局成相应对象
+            /*final LayoutInflater inflater = LayoutInflater.from(WebViewActivity2.this);
+            final View myview = inflater.inflate(R.layout.prompt_view, null);
+            //设置TextView对应网页中的提示信息,edit设置来自于网页的默认文字
+            ((TextView) myview.findViewById(R.id.text)).setText(message);
+            ((EditText) myview.findViewById(R.id.edit)).setText(defaultValue);
+            //定义对话框上的确定按钮
+            new AlertDialog.Builder(WebViewActivity2.this).setTitle("Prompt对话框").setView(myview)
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //单击确定后取得输入的值,传给网页处理
+                            String value = ((EditText) myview.findViewById(R.id.edit)).getText().toString();
+                            result.confirm(value + "PromptMessage");
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            result.cancel();
+                        }
+                    }).show();*/
             return true;
         }
     }
