@@ -14,8 +14,6 @@ import com.rzm.commonlibrary.general.imageloader.policy.SerialPolicy;
 
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
-
 
 /**
  * Created by rzm on 2017/7/22.
@@ -47,15 +45,15 @@ public class MyApplication extends BaseApplication {
 
     private void initNet() {
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
-                .readTimeout(10000L, TimeUnit.MILLISECONDS)
-                .writeTimeout(10000L,TimeUnit.MILLISECONDS)
-                .build();
-        OkHttpEngine okHttpEngine = OkHttpEngine.initClient(okHttpClient);
-
-        HttpUtils.initHttpEngine(okHttpEngine);
-        HttpUtils.initCacheEngine(new SPCacheEngine());
+//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//                .connectTimeout(10000L, TimeUnit.MILLISECONDS)
+//                .readTimeout(10000L, TimeUnit.MILLISECONDS)
+//                .writeTimeout(10000L,TimeUnit.MILLISECONDS)
+//                .build();
+//        OkHttpEngine okHttpEngine = OkHttpEngine.initClient(okHttpClient);
+//
+//        HttpUtils.initHttpEngine(okHttpEngine);
+//        HttpUtils.initCacheEngine(new SPCacheEngine());
     }
 
     @Override
